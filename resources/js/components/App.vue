@@ -1,11 +1,12 @@
 <template>
-    <div class="bg-red-500 text-white p-4">
-        Tailwind is working!
-    </div>
+    <Layout />
 </template>
 
 <script>
+import Layout from "./Layout.vue";
+
 export default {
     name: 'App',
+    components: {Layout},
 };
 </script>
