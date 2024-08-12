@@ -28,6 +28,10 @@
                             <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
                             <input v-model="password" id="password" type="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="••••••••" required />
                         </div>
+                        <div>
+                            <label for="password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
+                            <input v-model="password_confirmation" id="password_confirmation" type="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="••••••••" required />
+                        </div>
                         <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</button>
                     </form>
                 </div>
@@ -37,7 +41,8 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
+import axios from 'axios';
 
 const props = defineProps(['isVisible']);
 const emit = defineEmits(['close']);
@@ -45,10 +50,24 @@ const emit = defineEmits(['close']);
 const name = ref('');
 const email = ref('');
 const password = ref('');
+const password_confirmation = ref('');
 
-function submitForm() {
-    // Handle form submission logic
-    console.log('Form submitted:', { name: name.value, email: email.value, password: password.value });
+async function submitForm() {
+    try {
+        const response = await axios.post('/api/register', {
+            name: name.value,
+            email: email.value,
+            password: password.value,
+            password_confirmation: password_confirmation.value
+        });
+        name.value = '';
+        email.value = '';
+        password.value = '';
+        password_confirmation.value = '';
+        emit('close');
+    } catch (error) {
+        console.error('Registration error:', error.response?.data || error.message);
+    }
 }
 
 function hideRegisterModal() {

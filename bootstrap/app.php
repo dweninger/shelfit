@@ -52,4 +52,11 @@ $app->singleton(
 |
 */
 
+$app->detectEnvironment(function () {
+    return [
+        'local' => ['*.test', 'localhost', '127.0.0.1', 'Daniels-MBP.lan'],
+        'production' => ['*.your-domain.com'],
+    ];
+});
+
 return $app;
