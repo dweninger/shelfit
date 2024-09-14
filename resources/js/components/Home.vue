@@ -1,20 +1,9 @@
 <template>
-    <NavBar @open-register-modal="showRegisterModal" />
-    <RegisterModal :isVisible="isModalVisible" @close="hideRegisterModal" />
+    <Layout />
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import NavBar from './NavBar.vue';
-import RegisterModal from './RegisterModal.vue';
 
-const isModalVisible = ref(false);
+import Layout from "./Layout.vue";
 
-function showRegisterModal() {
-    isModalVisible.value = true;
-}
-
-function hideRegisterModal() {
-    isModalVisible.value = false;
-}
 </script>
