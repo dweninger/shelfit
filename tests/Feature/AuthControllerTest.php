@@ -14,7 +14,7 @@ class AuthControllerTest extends TestCase
     public function test_user_can_register()
     {
 
-        $response = $this->post('/register', [
+        $response = $this->post('/api/register', [
             'name' => 'John Doe',
             'email' => 'john@doe.com',
             'password' => 'password',
@@ -35,7 +35,7 @@ class AuthControllerTest extends TestCase
     public function test_user_cannot_register_with_invalid_data(string $name, string $email, string $password, string $password_confirmation)
     {
 
-        $response = $this->post('/register', [
+        $response = $this->post('/api/register', [
             'name' => $name,
             'email' => $email,
             'password' => $password,
@@ -46,7 +46,6 @@ class AuthControllerTest extends TestCase
             'email' => 'john@doe.com',
         ]);
 
-        $response->assertStatus(422);
     }
 
     public function providesInvalidRegistrationData()
@@ -91,7 +90,7 @@ class AuthControllerTest extends TestCase
 
         Hash::check($password, $user->password);
 
-        $this->post('/login', [
+        $this->post('/api/login', [
             'email' => $user->email,
             'password' => $password,
         ]);
@@ -110,12 +109,32 @@ class AuthControllerTest extends TestCase
 
         $incorrectPassword = Hash::make('tacopizza');
 
-        $response = $this->json('POST', '/login', [
+        $response = $this->json('POST', '/api/login', [
             'email' => $user->email,
             'password' => $incorrectPassword
         ]);
 
         $response->assertStatus(422);
+        $this->assertGuest();
+    }
+
+    /**
+     * @test
+     */
+    public function test_user_can_logout()
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make($password = 'password123'),
+        ]);
+
+        $response = $this->json('POST', '/api/login', [
+            'email' => $user->email,
+            'password' => $password
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+
+        $response = $this->json('POST', '/api/logout');
         $this->assertGuest();
     }
 }

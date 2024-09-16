@@ -54,11 +54,15 @@ const password_confirmation = ref('');
 
 async function submitForm() {
     try {
-        const response = await axios.post('/register', {
+        const response = await axios.post('/api/register', {
             name: name.value,
             email: email.value,
             password: password.value,
             password_confirmation: password_confirmation.value
+        }, {
+            headers: {
+                'Accept': 'application/json'
+            }
         });
         name.value = '';
         email.value = '';
