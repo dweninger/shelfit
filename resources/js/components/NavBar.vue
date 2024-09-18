@@ -100,6 +100,7 @@ export default {
         handleLogin(user) {
             this.user = user;
             this.isLoginModalVisible = false;
+            window.location.href = '/dashboard';
         },
         handleRegister(data) {
             this.user = data.user;
