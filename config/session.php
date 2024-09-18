@@ -198,4 +198,6 @@ return [
 
     'same_site' => 'lax',
 
+    'cookie_secure' => env('SESSION_SECURE_COOKIE', false),
+
 ];

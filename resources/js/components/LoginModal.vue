@@ -41,22 +41,30 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-const props = defineProps(['isVisible']);
-const emit = defineEmits(['close']);
+const props = defineProps({
+    isVisible: {
+        type: Boolean,
+        default: false,
+    },
+});
 
-const name = ref('');
+const emit = defineEmits(['close', 'logged-in']);
+
 const email = ref('');
 const password = ref('');
-const password_confirmation = ref('');
-
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 async function submitForm() {
     try {
-        const response = await axios.post('/api/login', {
+        const response = await axios.post('/login', {
             email: email.value,
             password: password.value,
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            }
         });
         password.value = '';
-        emit('close');
+        emit('logged-in', response.data.user);
     } catch (error) {
         console.error('Login error:', error.response?.data || error.message);
     }
@@ -66,3 +74,4 @@ function hideLoginModal() {
     emit('close');
 }
 </script>
+

@@ -24,28 +24,34 @@ class AuthController extends Controller
            'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
-
-        return response()->json($user, 201);
+        return response()->json(['message' => 'User registered successfully!'], 201);
     }
 
-    public function login(Request $request) {
-        $validated = $request->validate([
-           'email' => 'required|string|email|max:255',
-           'password' => 'required|string|min:8',
-        ]);
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']])) {
-            throw ValidationException::withMessages([
-                'email' => 'Sorry, those credentials do not match.',
-            ]);
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
         }
 
-        return redirect('/');
+        return response()->json([
+            'message' => 'Login successful',
+            'user' => Auth::user(),
+        ], 200);
     }
 
-    public function logout() {
+    public function logout(Request $request)
+    {
         Auth::logout();
-        return redirect('/');
+
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    }
+
+    public function user(Request $request)
+    {
+        return response()->json(['user' => Auth::user()]);
     }
 }

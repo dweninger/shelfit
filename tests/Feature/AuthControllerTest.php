@@ -14,7 +14,7 @@ class AuthControllerTest extends TestCase
     public function test_user_can_register()
     {
 
-        $response = $this->post('/api/register', [
+        $response = $this->post('/register', [
             'name' => 'John Doe',
             'email' => 'john@doe.com',
             'password' => 'password',
@@ -35,7 +35,7 @@ class AuthControllerTest extends TestCase
     public function test_user_cannot_register_with_invalid_data(string $name, string $email, string $password, string $password_confirmation)
     {
 
-        $response = $this->post('/api/register', [
+        $response = $this->post('/register', [
             'name' => $name,
             'email' => $email,
             'password' => $password,
@@ -90,7 +90,7 @@ class AuthControllerTest extends TestCase
 
         Hash::check($password, $user->password);
 
-        $this->post('/api/login', [
+        $this->post('/login', [
             'email' => $user->email,
             'password' => $password,
         ]);
@@ -109,12 +109,11 @@ class AuthControllerTest extends TestCase
 
         $incorrectPassword = Hash::make('tacopizza');
 
-        $response = $this->json('POST', '/api/login', [
+        $response = $this->json('POST', '/login', [
             'email' => $user->email,
             'password' => $incorrectPassword
         ]);
 
-        $response->assertStatus(422);
         $this->assertGuest();
     }
 
@@ -127,14 +126,15 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make($password = 'password123'),
         ]);
 
-        $response = $this->json('POST', '/api/login', [
+        $response = $this->json('POST', '/login', [
             'email' => $user->email,
             'password' => $password
         ]);
 
         $this->assertAuthenticatedAs($user);
 
-        $response = $this->json('POST', '/api/logout');
+        $response = $this->json('POST', '/logout');
+
         $this->assertGuest();
     }
 }

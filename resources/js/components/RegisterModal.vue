@@ -44,7 +44,13 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-const props = defineProps(['isVisible']);
+const props = defineProps({
+    isVisible: {
+        type: Boolean,
+        default: false,
+    },
+});
+
 const emit = defineEmits(['close']);
 
 const name = ref('');
@@ -54,21 +60,17 @@ const password_confirmation = ref('');
 
 async function submitForm() {
     try {
-        const response = await axios.post('/api/register', {
+        const response = await axios.post('/register', {
             name: name.value,
             email: email.value,
             password: password.value,
             password_confirmation: password_confirmation.value
-        }, {
-            headers: {
-                'Accept': 'application/json'
-            }
         });
         name.value = '';
         email.value = '';
         password.value = '';
         password_confirmation.value = '';
-        emit('close');
+        emit('registered', response.data);
     } catch (error) {
         console.error('Registration error:', error.response?.data || error.message);
     }
