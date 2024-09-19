@@ -15,11 +15,11 @@ export default {
     components: {Layout},
     data() {
         return {
-            // Define any dashboard data or state here
+
         };
     },
     mounted() {
-        // Any API calls or actions when the component is mounted
+
     }
 };
 </script>

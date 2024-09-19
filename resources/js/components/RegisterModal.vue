@@ -40,43 +40,50 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script>
 import axios from 'axios';
 
-const props = defineProps({
-    isVisible: {
-        type: Boolean,
-        default: false,
+export default {
+    props: {
+        isVisible: {
+            type: Boolean,
+            default: false,
+        },
     },
-});
-
-const emit = defineEmits(['close']);
-
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const password_confirmation = ref('');
-
-async function submitForm() {
-    try {
-        const response = await axios.post('/register', {
-            name: name.value,
-            email: email.value,
-            password: password.value,
-            password_confirmation: password_confirmation.value
-        });
-        name.value = '';
-        email.value = '';
-        password.value = '';
-        password_confirmation.value = '';
-        emit('registered', response.data);
-    } catch (error) {
-        console.error('Registration error:', error.response?.data || error.message);
-    }
-}
-
-function hideRegisterModal() {
-    emit('close');
-}
+    data() {
+        return {
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+            csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        };
+    },
+    methods: {
+        async submitForm() {
+            try {
+                const response = await axios.post('/register', {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password,
+                    password_confirmation: this.password_confirmation,
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': this.csrfToken,
+                    },
+                });
+                this.name = '';
+                this.email = '';
+                this.password = '';
+                this.password_confirmation = '';
+                this.$emit('registered', response.data);
+            } catch (error) {
+                console.error('Registration error:', error.response?.data || error.message);
+            }
+        },
+        hideRegisterModal() {
+            this.$emit('close');
+        },
+    },
+};
 </script>

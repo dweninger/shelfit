@@ -37,41 +37,43 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script>
 import axios from 'axios';
 
-const props = defineProps({
-    isVisible: {
-        type: Boolean,
-        default: false,
+export default {
+    props: {
+        isVisible: {
+            type: Boolean,
+            default: false,
+        },
     },
-});
-
-const emit = defineEmits(['close', 'logged-in']);
-
-const email = ref('');
-const password = ref('');
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-async function submitForm() {
-    try {
-        const response = await axios.post('/login', {
-            email: email.value,
-            password: password.value,
-        }, {
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
+    data() {
+        return {
+            email: '',
+            password: '',
+            csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        };
+    },
+    methods: {
+        async submitForm() {
+            try {
+                const response = await axios.post('/login', {
+                    email: this.email,
+                    password: this.password,
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': this.csrfToken
+                    }
+                });
+                this.password = '';
+                this.$emit('logged-in', response.data.user);
+            } catch (error) {
+                console.error('Login error:', error.response?.data || error.message);
             }
-        });
-        password.value = '';
-        emit('logged-in', response.data.user);
-    } catch (error) {
-        console.error('Login error:', error.response?.data || error.message);
-    }
-}
-
-function hideLoginModal() {
-    emit('close');
-}
+        },
+        hideLoginModal() {
+            this.$emit('close');
+        },
+    },
+};
 </script>
-
