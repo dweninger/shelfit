@@ -19,7 +19,7 @@ class BookUsersTest extends TestCase
         $user->books()->attach($books->pluck('id')->toArray());
 
         foreach ($books as $book) {
-            $this->assertDatabaseHas('book_users', [
+            $this->assertDatabaseHas('book_user', [
                 'user_id' => $user->id,
                 'book_id' => $book->id,
             ]);

@@ -13,7 +13,6 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <!-- Modal body -->
                 <div class="p-4 md:p-5">
                     <form @submit.prevent="submitForm" class="space-y-4">
                         <div>

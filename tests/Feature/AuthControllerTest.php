@@ -10,26 +10,21 @@ use Tests\TestCase;
 class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
-    /** @test */
     public function test_user_can_register()
     {
-
         $response = $this->post('/register', [
             'name' => 'John Doe',
             'email' => 'john@doe.com',
             'password' => 'password',
             'password_confirmation' => 'password'
-        ]);
+        ])->assertCreated();
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@doe.com',
         ]);
-
-        $response->assertStatus(201);
     }
 
     /**
-     * @test
      * @dataProvider providesInvalidRegistrationData
      */
     public function test_user_cannot_register_with_invalid_data(string $name, string $email, string $password, string $password_confirmation)
@@ -43,7 +38,7 @@ class AuthControllerTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing('users', [
-            'email' => 'john@doe.com',
+            'email' => $email,
         ]);
 
     }
@@ -79,28 +74,20 @@ class AuthControllerTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
     public function test_user_can_login_with_valid_credentials()
     {
         $user = User::factory()->create([
             'password' => Hash::make($password = 'password123'),
         ]);
 
-        Hash::check($password, $user->password);
-
         $this->post('/login', [
             'email' => $user->email,
             'password' => $password,
-        ]);
+        ])->assertSuccessful();
 
         $this->assertAuthenticatedAs($user);
     }
 
-    /**
-     * @test
-     */
     public function test_user_cannot_login_with_invalid_credentials()
     {
         $user = User::factory()->create([
@@ -117,9 +104,6 @@ class AuthControllerTest extends TestCase
         $this->assertGuest();
     }
 
-    /**
-     * @test
-     */
     public function test_user_can_logout()
     {
         $user = User::factory()->create([
