@@ -46,6 +46,6 @@ class User extends Authenticatable
     public function books(): BelongsToMany
     {
         return $this->belongsToMany(Book::class)
-            ->withPivot(['rating', 'read_from', 'read_to', 'comment']);
+            ->withPivot(['rating', 'read_from', 'read_to', 'comment', 'status']);
     }
 }
