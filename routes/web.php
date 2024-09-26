@@ -19,5 +19,6 @@ Route::get('/dashboard', function() {
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('books', [BookController::class, 'index'])->name('books.index');
-
-Route::post('/book-user', [BookUserController::class, 'store'])->name('book-user.store');
+Route::post('/users/{user}/books', [BookUserController::class, 'store'])
+    ->middleware('auth')
+    ->name('book-user.store');

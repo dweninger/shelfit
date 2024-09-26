@@ -16,7 +16,7 @@ class BookUserTest extends TestCase
         $user = User::factory()->create();
         $book = Book::factory()->create();
 
-        $this->actingAs($user)->post(route('book-user.store'), [
+        $this->actingAs($user)->post(route('book-user.store', $user->id), [
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,
@@ -34,5 +34,86 @@ class BookUserTest extends TestCase
             'read_to'   => now()->toDateString(),
             'status'    => 'Completed',
         ]);
+    }
+
+    public function test_guest_cannot_add_book_to_list()
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+
+        $this->post(route('book-user.store', $user->id), [
+            'book_id'   => $book->id,
+            'comment'  => 'Loved it!',
+            'rating'    => 5,
+            'read_from' => now()->toDateString(),
+            'read_to'   => now()->toDateString(),
+            'status'    => 'Completed',
+        ])->assertUnauthorized();
+
+        $this->assertDatabaseMissing('book_user', [
+            'user_id'   => $user->id,
+            'book_id'   => $book->id,
+            'comment'  => 'Loved it!',
+            'rating'    => 5,
+            'read_from' => now()->toDateString(),
+            'read_to'   => now()->toDateString(),
+            'status'    => 'Completed',
+        ]);
+    }
+
+    /**
+     * @dataProvider providesInvalidBookUserData
+     */
+    public function test_user_cannot_add_book_to_list_with_invalid_data(int $rating, string $readFrom, string $readTo, string $status)
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('book-user.store', $user->id), [
+            'book_id'   => $book->id,
+            'comment'  => 'Loved it!',
+            'rating'    => $rating,
+            'read_from' => $readFrom,
+            'read_to'   => $readTo,
+            'status'    => $status,
+        ])->assertUnprocessable();
+    }
+
+    public function providesInvalidBookUserData()
+    {
+
+        return [
+            'rating too high' => [
+                10,
+                now()->toDateString(),
+                now()->toDateString(),
+                'Completed',
+            ],
+            'rating is too low' => [
+                -1,
+                now()->toDateString(),
+                now()->toDateString(),
+                'Completed',
+            ],
+            'read_from is not a date' => [
+                5,
+                'taco',
+                now()->toDateString(),
+                'Completed',
+            ],
+            'read_to is not a date' => [
+                5,
+                now()->toDateString(),
+                'hotdog',
+                'Completed',
+            ],
+//            'invalid status' => [
+//                5,
+//                now()->toDateString(),
+//                now()->toDateString(),
+//                'pizza',
+//            ],
+        ];
     }
 }

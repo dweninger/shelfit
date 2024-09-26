@@ -18,9 +18,12 @@ class BookUserController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
-        // Validate input
+        if (Auth::id() !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $validated = $request->validate([
             'book_id'   => 'required|exists:books,id',
             'comment'  => 'nullable|string',
@@ -30,10 +33,8 @@ class BookUserController extends Controller
             'status'    => 'nullable|string',
         ]);
 
-        $userId = Auth::id();
         $bookId = $validated['book_id'];
 
-        $user = User::findOrFail($userId);
         $user->books()->attach($bookId, [
             'comment'  => $validated['comment'] ?? null,
             'rating'    => $validated['rating'] ?? null,
