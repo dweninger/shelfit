@@ -20,8 +20,8 @@ class BookUserTest extends TestCase
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,
-            'read_from' => now()->toDateString(),
-            'read_to'   => now()->toDateString(),
+            'started_reading_at' => now()->toDateString(),
+            'finished_reading_at'   => now()->toDateString(),
             'status'    => 'Completed',
         ])->assertSuccessful();
 
@@ -30,8 +30,8 @@ class BookUserTest extends TestCase
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,
-            'read_from' => now()->toDateString(),
-            'read_to'   => now()->toDateString(),
+            'started_reading_at' => now()->toDateString(),
+            'finished_reading_at'   => now()->toDateString(),
             'status'    => 'Completed',
         ]);
     }
@@ -41,12 +41,12 @@ class BookUserTest extends TestCase
         $book = Book::factory()->create();
         $user = User::factory()->create();
 
-        $this->post(route('book-user.store', $user->id), [
+        $this->postJson(route('book-user.store', $user->id), [
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,
-            'read_from' => now()->toDateString(),
-            'read_to'   => now()->toDateString(),
+            'started_reading_at' => now()->toDateString(),
+            'finished_reading_at'   => now()->toDateString(),
             'status'    => 'Completed',
         ])->assertUnauthorized();
 
@@ -55,8 +55,8 @@ class BookUserTest extends TestCase
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,
-            'read_from' => now()->toDateString(),
-            'read_to'   => now()->toDateString(),
+            'started_reading_at' => now()->toDateString(),
+            'finished_reading_at'   => now()->toDateString(),
             'status'    => 'Completed',
         ]);
     }
@@ -74,8 +74,8 @@ class BookUserTest extends TestCase
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => $rating,
-            'read_from' => $readFrom,
-            'read_to'   => $readTo,
+            'started_reading_at' => $readFrom,
+            'finished_reading_at'   => $readTo,
             'status'    => $status,
         ])->assertUnprocessable();
     }

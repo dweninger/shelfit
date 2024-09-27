@@ -28,8 +28,8 @@ class BookUserController extends Controller
             'book_id'   => 'required|exists:books,id',
             'comment'  => 'nullable|string',
             'rating'    => 'nullable|integer|min:1|max:5',
-            'read_from' => 'nullable|date',
-            'read_to'   => 'nullable|date',
+            'started_reading_at' => 'nullable|date',
+            'finished_reading_at'   => 'nullable|date',
             'status'    => 'nullable|string',
         ]);
 
@@ -38,8 +38,8 @@ class BookUserController extends Controller
         $user->books()->attach($bookId, [
             'comment'  => $validated['comment'] ?? null,
             'rating'    => $validated['rating'] ?? null,
-            'read_from' => $validated['read_from'] ?? null,
-            'read_to'   => $validated['read_to'] ?? null,
+            'started_reading_at' => $validated['started_reading_at'] ?? null,
+            'finished_reading_at'   => $validated['finished_reading_at'] ?? null,
             'status'    => $validated['status'] ?? null,
         ]);
 
