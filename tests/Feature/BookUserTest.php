@@ -108,12 +108,12 @@ class BookUserTest extends TestCase
                 'hotdog',
                 'Completed',
             ],
-//            'invalid status' => [
-//                5,
-//                now()->toDateString(),
-//                now()->toDateString(),
-//                'pizza',
-//            ],
+            'invalid status' => [
+                5,
+                now()->toDateString(),
+                now()->toDateString(),
+                'pizza',
+            ],
         ];
     }
 }
