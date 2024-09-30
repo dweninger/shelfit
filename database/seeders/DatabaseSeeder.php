@@ -13,11 +13,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $users = User::factory()->count(10)->create();
-        $books = Book::factory()->count(40)->create();
+        $this->call(BookSeeder::class);
+        $books = Book::all();
 
         $users->each(function ($user) use ($books) {
             $user->books()->attach(
-                $books->random(rand(1, 5))->pluck('id')->toArray()
+                $books->random(rand(3, 8))->pluck('id')->toArray()
             );
         });
     }

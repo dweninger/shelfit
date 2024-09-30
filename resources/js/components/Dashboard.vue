@@ -8,12 +8,12 @@
                     <div class="flex flex-col md:flex-row items-center border border-gray-400 my-2 mx-auto rounded-lg shadow max-w-screen-xl bg-stone-300">
                         <!-- Book Image -->
                         <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-24 md:rounded-none md:rounded-l-lg"
-                             src="https://m.media-amazon.com/images/I/81TVqiv-ctL._AC_UF1000,1000_QL80_.jpg" alt="">
+                             :src="book.cover_image" alt="">
 
                         <!-- Book Info Section -->
-                        <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-2/3">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ book.title }}</h5>
-                            <p class="mb-3 font-normal text-gray-700">{{ book.pivot.comment }}</p>
+                        <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">{{ book.title }}</h5>
+                            <p class="mb-3 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">{{ book.pivot.comment }}</p>
                         </div>
 
                         <!-- Rating, Edit Button, and Date Section -->
@@ -46,7 +46,7 @@
                             </div>
 
                             <!-- Status -->
-                            <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">{{ book.pivot.status }}</p>
+                            <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">{{ book.pivot.status ?? "Want to Read" }}</p>
 
                             <!-- Date Pickers -->
                             <div class="flex mx-auto">
@@ -64,23 +64,28 @@
             </ul>
             <p v-else class="text-center text-xl">No books available</p>
             <div class="flex justify-end">
-                <button class="">
-                    <svg class="h-8 w-8"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="5" y1="12" x2="19" y2="12" /></svg>                </button>
+                <button @click="showAddBookModal" class="font-bold mt-2 bg-stone-200 rounded border-2 border-stone-800 hover:bg-stone-300">
+                    <svg class="h-8 w-8"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="5" y1="12" x2="19" y2="12" /></svg>
+                </button>
             </div>
         </div>
+
+        <AddBookToShelfModal :isVisible="isAddBookModalVisible" @close="hideAddBookModal" @book-added="handleBookAdded"/>
     </div>
 </template>
 
 <script>
 import Layout from "./Layout.vue";
 import axios from "axios";
+import AddBookToShelfModal from "./AddBookToShelfModal.vue";
 
 export default {
     name: 'Dashboard',
-    components: {Layout},
+    components: {AddBookToShelfModal, Layout },
     data() {
         return {
             books: [],
+            isAddBookModalVisible: false,
         };
     },
     mounted() {
@@ -90,6 +95,16 @@ export default {
 
     },
     methods: {
+        statusColor(status) {
+            switch (status){
+                case 'Completed':
+                    return 'text-green-800';
+                case 'Did Not Finish':
+                    return 'text-red-800';
+                default:
+                    return 'text-yellow-800';
+            }
+        },
         async getBooks() {
             try {
                 const response = await axios.get("/books");
@@ -99,8 +114,15 @@ export default {
                 this.books = null;
             }
         },
-        statusColor(status) {
-            return status === 'Completed' ? 'text-green-800' : 'text-red-800'
+        hideAddBookModal() {
+            this.isAddBookModalVisible = false;
+        },
+        showAddBookModal() {
+            this.isAddBookModalVisible = true;
+        },
+        handleBookAdded() {
+            this.getBooks();
+            this.hideAddBookModal();
         }
     }
 };

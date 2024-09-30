@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BookUserTest extends TestCase
+class BookUserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -16,7 +16,7 @@ class BookUserTest extends TestCase
         $user = User::factory()->create();
         $book = Book::factory()->create();
 
-        $this->actingAs($user)->post(route('book-user.store', $user->id), [
+        $this->actingAs($user)->post(route('book-user.store'), [
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,
@@ -41,7 +41,7 @@ class BookUserTest extends TestCase
         $book = Book::factory()->create();
         $user = User::factory()->create();
 
-        $this->postJson(route('book-user.store', $user->id), [
+        $this->postJson(route('book-user.store'), [
             'book_id'   => $book->id,
             'comment'  => 'Loved it!',
             'rating'    => 5,

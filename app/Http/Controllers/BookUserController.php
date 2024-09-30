@@ -19,11 +19,13 @@ class BookUserController extends Controller
         //
     }
 
-    public function store(Request $request, User $user)
+    public function store(Request $request)
     {
-        if (Auth::id() !== $user->id) {
+        if (!Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+
+        $user = Auth::user();
 
         $validated = $request->validate([
             'book_id' => ['required', Rule::exists('books', 'id')],

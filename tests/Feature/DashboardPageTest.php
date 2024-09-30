@@ -40,6 +40,6 @@ class DashboardPageTest extends TestCase
 
         $response = $this->get('/dashboard');
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/');
     }
 }
