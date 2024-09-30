@@ -23,6 +23,8 @@ Route::get('/dashboard', function() {
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::get('/books/search', [BookController::class, 'search'])->name('books.search');
+
+Route::get('/book-user/statuses', [BookUserController::class, 'statuses'])->name('bookUser.statuses');
 Route::post('/book-user', [BookUserController::class, 'store'])
     ->middleware('auth')
     ->name('book-user.store');

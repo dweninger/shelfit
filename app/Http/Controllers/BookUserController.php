@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookUserStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,14 +10,11 @@ use Illuminate\Validation\Rule;
 
 class BookUserController extends Controller
 {
-    public function index()
+    public function statuses()
     {
-        //
-    }
+        $statuses = BookUserStatus::getStatuses();
 
-    public function create()
-    {
-        //
+        return response()->json(['statuses'=>$statuses]);
     }
 
     public function store(Request $request)
@@ -33,7 +31,7 @@ class BookUserController extends Controller
             'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
             'started_reading_at' => ['nullable', 'date'],
             'finished_reading_at' => ['nullable', 'date'],
-            'status' => ['nullable', 'string', Rule::in(['Completed', 'Reading', "Did Not Finish", "Want to Read"])],
+            'status' => ['nullable', 'string', Rule::in(BookUserStatus::getStatuses())],
         ]);
 
         $bookId = $validated['book_id'];
@@ -47,25 +45,5 @@ class BookUserController extends Controller
         ]);
 
         return response()->json(['message' => 'Book added to user\'s list'], 201);
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
     }
 }

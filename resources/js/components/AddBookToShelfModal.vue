@@ -53,6 +53,12 @@
                             <textarea v-model="comment" id="comment" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="I liked the book a lot. The twist was very good." />
                         </div>
 
+                        <div>
+                            <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                            <select v-model="selectedStatus" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+                            </select>
+                        </div>
                         <button
                             type="submit"
                             class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -83,9 +89,22 @@ export default {
             csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             searchResults: [],
             selectedBook: null,
+            statuses: [],
+            selectedStatus: 'Want to Read',
         };
     },
+    mounted() {
+        this.getStatuses();
+    },
     methods: {
+        async getStatuses() {
+            try {
+                const response = await axios.get(`/book-user/statuses`);
+                this.statuses = response.data.statuses;
+            } catch (e) {
+
+            }
+        },
         async searchBooks() {
           if (this.bookTitle.length >= 2) {
               try {
@@ -108,6 +127,7 @@ export default {
                 await axios.post('/book-user', {
                     book_id: this.selectedBook.id,
                     comment: this.comment,
+                    status: this.selectedStatus,
                 }, {
                     headers: {
                         'X-CSRF-TOKEN': this.csrfToken
@@ -118,6 +138,7 @@ export default {
                 this.comment = '';
                 this.searchResults = [];
                 this.selectedBook = null;
+                this.selectedStatus = 'Want to Read';
 
             } catch (error) {
                 console.error('Error adding book:', error.response?.data || error.message);
