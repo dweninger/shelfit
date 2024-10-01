@@ -18,9 +18,9 @@
 
                         <!-- Search -->
                         <div>
-                            <label for="book" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Search for a Book</label>
+                            <label for="book" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Search for a Book <span class="text-red-600">*</span></label>
                             <input
-                                v-model="bookTitle"
+                                v-model="form.bookTitle"
                                 @input="searchBooks"
                                 id="book"
                                 type="text"
@@ -44,21 +44,46 @@
                             </ul>
                         </div>
 
-                        <div v-if="selectedBook">
-                            <p class="text-gray-700 dark:text-white"><strong>Selected Book:</strong> {{ selectedBook.title }}</p>
+                        <div v-if="form.selectedBook">
+                            <p class="text-gray-700 dark:text-white"><strong>Selected Book:</strong> {{ form.selectedBook.title }}</p>
                         </div>
 
                         <div>
                             <label for="comment" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Comment</label>
-                            <textarea v-model="comment" id="comment" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="I liked the book a lot. The twist was very good." />
+                            <textarea v-model="form.comment" id="comment" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="I liked the book a lot. The twist was very good." />
                         </div>
 
-                        <div>
-                            <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                            <select v-model="selectedStatus" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
-                            </select>
+                        <div class="flex w-full justify-between items-center">
+                            <div class="w-fit px-4">
+                                <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                                <select v-model="form.selectedStatus" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                    <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+                                </select>
+                            </div>
+
+                            <div class="w-fit px-4">
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Rating</label>
+                                <StarRating v-model="form.rating" />
+                            </div>
                         </div>
+
+                        <div class="w-fit mx-auto">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Started - Finished</label>
+                            <div class="flex mx-auto">
+                                <input type="date"
+                                       class="p-1 text-sm text-center bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white appearance-none"
+                                        v-model="form.started_reading">
+
+                                <span class="font-bold text-center my-auto mx-2 text-white"> - </span>
+
+                                <input type="date"
+                                       class="p-1 text-sm text-center bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white appearance-none"
+                                        v-model="form.finished_reading">
+                            </div>
+                        </div>
+
+                        <hr />
+
                         <button
                             type="submit"
                             class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -74,8 +99,12 @@
 
 <script>
 import axios from 'axios';
+import StarRating from './StarRating.vue';
 
 export default {
+    components: {
+      StarRating
+    },
     props: {
         isVisible: {
             type: Boolean,
@@ -84,13 +113,18 @@ export default {
     },
     data() {
         return {
-            bookTitle: '',
-            comment: '',
+            form: {
+                bookTitle: '',
+                selectedBook: null,
+                comment: '',
+                selectedStatus: 'Want to Read',
+                rating: 0,
+                started_reading: null,
+                finished_reading: null,
+            },
             csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             searchResults: [],
-            selectedBook: null,
             statuses: [],
-            selectedStatus: 'Want to Read',
         };
     },
     mounted() {
@@ -102,51 +136,76 @@ export default {
                 const response = await axios.get(`/book-user/statuses`);
                 this.statuses = response.data.statuses;
             } catch (e) {
-
+                console.error('Error fetching statuses: ', e);
             }
         },
         async searchBooks() {
-          if (this.bookTitle.length >= 2) {
+          if (this.form.bookTitle.length >= 2) {
               try {
-                  const response = await axios.get(`/books/search?title=${this.bookTitle}`);
+                  const response = await axios.get(`/books/search?title=${this.form.bookTitle}`);
                   this.searchResults = response.data;
               } catch (e) {
-
+                console.error('Error searching for books: ', e);
               }
           } else {
               this.searchResults = [];
           }
         },
         selectBook(book) {
-          this.selectedBook = book;
-          this.bookTitle = book.title;
+          this.form.selectedBook = book;
+          this.form.bookTitle = book.title;
           this.searchResults = [];
         },
         async submitForm() {
             try {
                 await axios.post('/book-user', {
-                    book_id: this.selectedBook.id,
-                    comment: this.comment,
-                    status: this.selectedStatus,
+                    book_id: this.form.selectedBook.id,
+                    comment: this.form.comment,
+                    status: this.form.selectedStatus,
+                    rating: this.form.rating,
+                    started_reading_at: this.form.started_reading,
+                    finished_reading_at: this.form.finished_reading,
                 }, {
                     headers: {
                         'X-CSRF-TOKEN': this.csrfToken
                     }
                 });
-                this.$emit('book-added', this.selectedBook);
-                this.bookTitle = '';
-                this.comment = '';
-                this.searchResults = [];
-                this.selectedBook = null;
-                this.selectedStatus = 'Want to Read';
-
+                this.$emit('book-added', this.form.selectedBook);
+                this.resetForm();
             } catch (error) {
                 console.error('Error adding book:', error.response?.data || error.message);
             }
         },
+        resetForm() {
+            this.form = {
+                bookTitle: '',
+                comment: '',
+                selectedBook: null,
+                selectedStatus: 'Want to Read',
+                rating: 0,
+                started_reading: null,
+                finished_reading: null,
+            };
+            this.searchResults = [];
+        },
         hideAddBookModal() {
             this.$emit('close');
+            this.resetForm();
         },
     },
 };
 </script>
+
+<style scoped>
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* For Firefox */
+input[type="date"] {
+    -moz-appearance: textfield;
+}
+
+</style>
