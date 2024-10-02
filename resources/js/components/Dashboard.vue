@@ -1,25 +1,26 @@
 <template>
-    <div class="dashboard">
+    <div class="dashboard min-h-screen bg-gray-700">
         <layout></layout>
-        <h1 class="text-4xl font-semibold my-4 text-center">Your Shelved Books</h1>
+        <h1 class="text-4xl font-semibold my-4 text-white text-center">Your Shelved Books</h1>
         <div class="w-fit mx-auto">
-            <ul class="overflow-y-auto h-96 rounded-xl border-2 border-gray-400 p-4" v-if="books && books.length">
+            <ul class="scrollable-ul overflow-y-auto h-[40rem] shadow-2xl rounded-xl border-2 border-gray-400 p-4" v-if="books && books.length">
                 <li v-for="(book, index) in books" :key="index">
-                    <div class="flex flex-col md:flex-row items-center border border-gray-400 my-2 mx-auto rounded-lg shadow max-w-screen-xl bg-stone-300">
+                    <div class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-stone-300">
                         <!-- Book Image -->
-                        <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-24 md:rounded-none md:rounded-l-lg"
-                             :src="book.cover_image" alt="">
+                        <img class="w-24 h-auto rounded-l-lg object-cover"
+                             :src="book.cover_image" :alt="book.title + ' cover'">
 
                         <!-- Book Info Section -->
                         <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">{{ book.title }}</h5>
-                            <p class="mb-3 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">{{ book.pivot.comment }}</p>
+                            <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">{{ book.title }}</h5>
+                            <p class="mb-2">By: {{book.author}} | {{book.published_at.split('-')[0]}}</p>
+                            <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">{{ book.pivot.comment }}</p>
                         </div>
 
                         <!-- Rating, Edit Button, and Date Section -->
                         <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
                             <!-- Edit Button -->
-                            <button class="absolute top-0 right-2">
+                            <button class="absolute top-1 right-2">
                                 <svg class="h-8 w-8 text-gray-700" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                      stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" />
@@ -55,7 +56,7 @@
             </ul>
             <p v-else class="text-center text-xl">No books available</p>
             <div class="flex justify-end">
-                <button @click="showAddBookModal" class="font-bold mt-2 bg-stone-200 rounded border-2 border-stone-800 hover:bg-stone-300">
+                <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <svg class="h-8 w-8"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="5" y1="12" x2="19" y2="12" /></svg>
                 </button>
             </div>
@@ -130,6 +131,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* For Firefox */
 input[type="date"] {
     -moz-appearance: textfield;
+}
+
+.scrollable-ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-ul::-webkit-scrollbar-track {
+    background: none;
+    margin-right: 2px;
+}
+
+.scrollable-ul::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 10px;
+    border: 1px solid darkslategray;
+}
+
+.scrollable-ul::-webkit-scrollbar-thumb:hover {
+    background-color: darkgray;
 }
 
 </style>

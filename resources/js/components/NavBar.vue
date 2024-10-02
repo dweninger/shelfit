@@ -24,11 +24,11 @@
                     </button>
                     <div
                         v-if="dropdownOpen"
-                        class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 dark:bg-gray-700"
+                        class="absolute left-0 mt-2 w-48 bg-gray-500 rounded-md shadow-lg py-1"
                     >
-                        <a href="/"
+                        <a href="/dashboard"
                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
-                            Profile
+                            Dashboard
                         </a>
                         <a href="/"
                            @click="logout"
