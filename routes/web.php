@@ -28,3 +28,6 @@ Route::get('/book-user/statuses', [BookUserController::class, 'statuses'])->name
 Route::post('/book-user', [BookUserController::class, 'store'])
     ->middleware('auth')
     ->name('book-user.store');
+Route::put('/book-user/{book}', [BookUserController::class, 'update'])
+    ->middleware('auth')
+    ->name('book-user.update');

@@ -116,4 +116,29 @@ class BookUserControllerTest extends TestCase
             ],
         ];
     }
+
+    public function test_user_can_update_a_book_on_their_list()
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+
+        $user->books()->attach($book->id);
+
+        $updatedData = [
+            'status' => 'Completed',
+            'rating' => 5,
+            'comment' => 'Loved it!',
+        ];
+
+        $this->actingAs($user)->put(route('book-user.update', $book->id), $updatedData)
+        ->assertSuccessful();
+
+        $this->assertDatabaseHas('book_user', [
+            'user_id'   => $user->id,
+            'book_id'   => $book->id,
+            'status'    => 'Completed',
+            'rating'    => 5,
+            'comment'   => 'Loved it!',
+        ]);
+    }
 }

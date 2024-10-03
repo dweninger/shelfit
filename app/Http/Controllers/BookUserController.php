@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BookUserStatus;
+use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,5 +46,28 @@ class BookUserController extends Controller
         ]);
 
         return response()->json(['message' => 'Book added to user\'s list'], 201);
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'comment' => ['nullable', 'string'],
+            'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
+            'started_reading_at' => ['nullable', 'date'],
+            'finished_reading_at' => ['nullable', 'date'],
+            'status' => ['nullable', 'string', Rule::in(BookUserStatus::getStatuses())],
+        ]);
+
+        $user->books()->updateExistingPivot($book->id, [
+            'comment' => $validated['comment'] ?? null,
+            'rating' => $validated['rating'] ?? null,
+            'started_reading_at' => $validated['started_reading_at'] ?? null,
+            'finished_reading_at' => $validated['finished_reading_at'] ?? null,
+            'status' => $validated['status'] ?? null,
+        ]);
+
+        return response()->json(['message' => 'Book updated successfully'], 200);
     }
 }
