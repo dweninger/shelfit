@@ -5,25 +5,27 @@ namespace App\Http\Controllers;
 use App\Enums\BookUserStatus;
 use App\Models\Book;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BookUserController extends Controller
 {
-    public function statuses()
+    public function statuses(): JsonResponse
     {
         $statuses = BookUserStatus::getStatuses();
 
         return response()->json(['statuses'=>$statuses]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         if (!Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        /** @var User $user */
         $user = Auth::user();
 
         $validated = $request->validate([
@@ -37,18 +39,20 @@ class BookUserController extends Controller
 
         $bookId = $validated['book_id'];
 
-        $user->books()->attach($bookId, [
-            'comment' => $validated['comment'] ?? null,
-            'rating' => $validated['rating'] ?? null,
-            'started_reading_at' => $validated['started_reading_at'] ?? null,
-            'finished_reading_at' => $validated['finished_reading_at'] ?? null,
-            'status' => $validated['status'] ?? null,
+        $user->books()->syncWithoutDetaching([
+            $bookId => [
+                'comment' => $validated['comment'] ?? null,
+                'rating' => $validated['rating'] ?? null,
+                'started_reading_at' => $validated['started_reading_at'] ?? null,
+                'finished_reading_at' => $validated['finished_reading_at'] ?? null,
+                'status' => $validated['status'] ?? null,
+            ]
         ]);
 
         return response()->json(['message' => 'Book added to user\'s list'], 201);
     }
 
-    public function update(Request $request, Book $book)
+    public function update(Request $request, Book $book): JsonResponse
     {
         $user = Auth::user();
 
@@ -69,5 +73,14 @@ class BookUserController extends Controller
         ]);
 
         return response()->json(['message' => 'Book updated successfully'], 200);
+    }
+
+    public function destroy(Book $book): JsonResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $user->books()->detach($book);
+
+        return response()->json(['message' => 'Book removed successfully'], 200);
     }
 }

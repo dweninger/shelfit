@@ -61,6 +61,46 @@ class BookUserControllerTest extends TestCase
         ]);
     }
 
+    public function test_user_cannot_add_the_same_book_to_list_twice()
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->postJson(route('book-user.store'), [
+            'book_id'   => $book->id,
+            'comment'  => 'Loved it!',
+            'rating'    => 5,
+            'started_reading_at' => now()->toDateString(),
+            'finished_reading_at'   => now()->toDateString(),
+            'status'    => 'Completed',
+        ])->assertSuccessful();
+
+        $this->assertDatabaseHas('book_user', [
+            'book_id' => $book->id,
+            'user_id' => $user->id,
+            'comment' => 'Loved it!',
+            'rating' => 5,
+            'status' => 'Completed',
+        ]);
+
+        $this->actingAs($user)->postJson(route('book-user.store'), [
+            'book_id'   => $book->id,
+            'comment'  => 'Updated comment',
+            'rating'    => 3,
+            'status'    => 'Want to Read',
+        ])->assertSuccessful();
+
+        $this->assertDatabaseCount('book_user', 1);
+
+        $this->assertDatabaseHas('book_user', [
+            'book_id' => $book->id,
+            'user_id' => $user->id,
+            'comment' => 'Updated comment',
+            'rating' => 3,
+            'status' => 'Want to Read',
+        ]);
+    }
+
     /**
      * @dataProvider providesInvalidBookUserData
      */
@@ -139,6 +179,22 @@ class BookUserControllerTest extends TestCase
             'status'    => 'Completed',
             'rating'    => 5,
             'comment'   => 'Loved it!',
+        ]);
+    }
+
+    public function test_user_can_remove_a_book_on_their_list()
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+
+        $user->books()->attach($book->id);
+
+        $this->actingAs($user)->delete(route('book-user.destroy', $book->id))
+            ->assertSuccessful();
+
+        $this->assertDatabaseMissing('book_user', [
+            'user_id'   => $user->id,
+            'book_id'   => $book->id,
         ]);
     }
 }

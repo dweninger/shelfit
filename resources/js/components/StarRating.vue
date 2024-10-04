@@ -54,7 +54,7 @@ export default {
         }
     },
     watch: {
-        rating(newRating) {
+        modelValue(newRating) {
             this.currentRating = newRating;
         }
     }

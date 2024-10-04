@@ -4,7 +4,7 @@
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Add Book to Shelf
+                        {{form.selectedBook.title}}
                     </h3>
                     <button @click="hideAddBookModal" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -14,39 +14,7 @@
                     </button>
                 </div>
                 <div class="p-4 md:p-5">
-                    <form @submit.prevent="submitForm" class="space-y-4">
-
-                        <!-- Search -->
-                        <div>
-                            <label for="book" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Search for a Book <span class="text-red-600">*</span></label>
-                            <input
-                                v-model="form.bookTitle"
-                                @input="searchBooks"
-                                id="book"
-                                type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Enter book title"
-                                required
-                            />
-                        </div>
-
-                        <!-- Display search results -->
-                        <div v-if="searchResults.length">
-                            <ul class="border border-gray-300 rounded-lg max-h-40 overflow-y-auto">
-                                <li
-                                    v-for="(result, index) in searchResults"
-                                    :key="index"
-                                    @click="selectBook(result)"
-                                    class="p-2 text-white hover:text-black hover:bg-gray-200 cursor-pointer"
-                                >
-                                    {{ result.title }}
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div v-if="form.selectedBook">
-                            <p class="text-gray-700 dark:text-white"><strong>Selected Book:</strong> {{ form.selectedBook.title }}</p>
-                        </div>
+                    <form @submit.prevent="updateShelvedBook" class="space-y-4">
 
                         <div>
                             <label for="comment" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Comment</label>
@@ -72,24 +40,33 @@
                             <div class="flex mx-auto">
                                 <input type="date"
                                        class="p-1 text-sm text-center bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white appearance-none"
-                                        v-model="form.started_reading">
+                                       v-model="form.started_reading">
 
                                 <span class="font-bold text-center my-auto mx-2 text-white"> - </span>
 
                                 <input type="date"
                                        class="p-1 text-sm text-center bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white appearance-none"
-                                        v-model="form.finished_reading">
+                                       v-model="form.finished_reading">
                             </div>
                         </div>
 
                         <hr />
+                        <div class="w-full flex justify-between">
+                            <button
+                                type="submit"
+                                class="mx-4 px-16 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm py-2.5 text-center"
+                            >
+                                Update
+                            </button>
 
-                        <button
-                            type="submit"
-                            class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        >
-                            Add Book
-                        </button>
+                            <button
+                                @click="removeBookFromShelf"
+                                class="mx-4 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                Remove
+                            </button>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -103,34 +80,56 @@ import StarRating from './StarRating.vue';
 
 export default {
     components: {
-      StarRating
+        StarRating
     },
     props: {
         isVisible: {
             type: Boolean,
             default: false,
         },
+        selectedBook: {
+            type: Object,
+            required: true,
+        },
     },
     data() {
         return {
             form: {
-                bookTitle: '',
-                selectedBook: null,
-                comment: '',
-                selectedStatus: 'Want to Read',
-                rating: null,
-                started_reading: null,
-                finished_reading: null,
+                selectedBook: this.selectedBook,
+                comment: this.selectedBook.pivot?.comment || '',
+                selectedStatus: this.selectedBook.pivot?.status || 'Want to Read',
+                rating: this.selectedBook.pivot?.rating || null,
+                started_reading: this.selectedBook.pivot?.started_reading_at || null,
+                finished_reading: this.selectedBook.pivot?.finished_reading_at || null,
             },
             csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            searchResults: [],
             statuses: [],
         };
     },
     mounted() {
         this.getStatuses();
     },
+    watch: {
+        selectedBook: {
+            immediate: true,
+            handler(newValue) {
+                if (newValue) {
+                    this.initializeForm();
+                }
+            }
+        }
+    },
     methods: {
+        initializeForm() {
+            this.form = {
+                selectedBook: this.selectedBook,
+                comment: this.selectedBook.pivot?.comment || '',
+                selectedStatus: this.selectedBook.pivot?.status || 'Want to Read',
+                rating: this.selectedBook.pivot?.rating || null,
+                started_reading: this.selectedBook.pivot?.started_reading_at || null,
+                finished_reading: this.selectedBook.pivot?.finished_reading_at || null,
+            };
+        },
         async getStatuses() {
             try {
                 const response = await axios.get(`/book-user/statuses`);
@@ -139,28 +138,9 @@ export default {
                 console.error('Error fetching statuses: ', e);
             }
         },
-        //TODO: Debounce | look at abort request
-        async searchBooks() {
-          if (this.form.bookTitle.length >= 2) {
-              try {
-                  const response = await axios.get(`/books/search?title=${this.form.bookTitle}`);
-                  this.searchResults = response.data;
-              } catch (e) {
-                console.error('Error searching for books: ', e);
-              }
-          } else {
-              this.searchResults = [];
-          }
-        },
-        selectBook(book) {
-          this.form.selectedBook = book;
-          this.form.bookTitle = book.title;
-          this.searchResults = [];
-        },
-        async submitForm() {
+        async updateShelvedBook() {
             try {
-                await axios.post('/book-user', {
-                    book_id: this.form.selectedBook.id,
+                await axios.put(`/book-user/${this.form.selectedBook.id}`, {
                     comment: this.form.comment,
                     status: this.form.selectedStatus,
                     rating: this.form.rating,
@@ -171,27 +151,39 @@ export default {
                         'X-CSRF-TOKEN': this.csrfToken
                     }
                 });
-                this.$emit('book-added', this.form.selectedBook);
+                this.$emit('book-updated');
                 this.resetForm();
             } catch (error) {
-                console.error('Error adding book:', error.response?.data || error.message);
+                console.error('Error updating shelved book:', error.response?.data || error.message);
             }
         },
         resetForm() {
             this.form = {
-                bookTitle: '',
                 comment: '',
                 selectedBook: null,
                 selectedStatus: 'Want to Read',
-                rating: 0,
+                rating: null,
                 started_reading: null,
                 finished_reading: null,
             };
-            this.searchResults = [];
         },
         hideAddBookModal() {
             this.$emit('close');
             this.resetForm();
+        },
+        async removeBookFromShelf() {
+            try {
+                await axios.delete(`/book-user/${this.form.selectedBook.id}`, {
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': this.csrfToken
+                    }
+                });
+                this.$emit('book-updated');
+                this.resetForm();
+            } catch (error) {
+                console.error('Error removing book from shelf:', error.response?.data || error.message);
+            }
         },
     },
 };

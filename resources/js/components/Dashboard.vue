@@ -13,14 +13,14 @@
                         <!-- Book Info Section -->
                         <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
                             <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">{{ book.title }}</h5>
-                            <p class="mb-2">By: {{book.author}} | {{book.published_at.split('-')[0]}}</p>
+                            <p class="mb-2">{{book.author}} | {{book.published_at.split('-')[0]}}</p>
                             <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">{{ book.pivot.comment }}</p>
                         </div>
 
                         <!-- Rating, Edit Button, and Date Section -->
                         <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
                             <!-- Edit Button -->
-                            <button class="absolute top-1 right-2">
+                            <button class="absolute top-1 right-2" @click="showUpdateModal(book)">
                                 <svg class="h-8 w-8 text-gray-700" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                      stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" />
@@ -55,14 +55,15 @@
                 </li>
             </ul>
             <p v-else class="text-center text-xl">No books available</p>
-            <div class="flex justify-end">
-                <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <div class="flex justify-end pb-12">
+                <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-700 hover:contrast-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center">
                     <svg class="h-8 w-8"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="5" y1="12" x2="19" y2="12" /></svg>
                 </button>
             </div>
         </div>
 
         <AddBookToShelfModal :isVisible="isAddBookModalVisible" @close="hideAddBookModal" @book-added="handleBookAdded"/>
+        <UpdateShelvedBookModal :isVisible="isUpdateModalVisible" :selectedBook="selectedBook" @close="hideUpdateModal" @book-updated="handleBookUpdated"/>
     </div>
 </template>
 
@@ -71,14 +72,17 @@ import Layout from "./Layout.vue";
 import axios from "axios";
 import AddBookToShelfModal from "./AddBookToShelfModal.vue";
 import StarRating from "./StarRating.vue";
+import UpdateShelvedBookModal from "./UpdateShelvedBookModal.vue";
 
 export default {
     name: 'Dashboard',
-    components: {StarRating, AddBookToShelfModal, Layout },
+    components: {UpdateShelvedBookModal, StarRating, AddBookToShelfModal, Layout },
     data() {
         return {
             books: [],
             isAddBookModalVisible: false,
+            isUpdateModalVisible: false,
+            selectedBook: {},
         };
     },
     mounted() {
@@ -116,7 +120,20 @@ export default {
         handleBookAdded() {
             this.getBooks();
             this.hideAddBookModal();
-        }
+        },
+        hideUpdateModal() {
+            this.selectedBook = {};
+            this.isUpdateModalVisible = false;
+        },
+        showUpdateModal(book) {
+            this.selectedBook = book;
+            this.isUpdateModalVisible = true;
+        },
+        handleBookUpdated() {
+            this.selectedBook = {};
+            this.getBooks();
+            this.hideUpdateModal();
+        },
     }
 };
 </script>
