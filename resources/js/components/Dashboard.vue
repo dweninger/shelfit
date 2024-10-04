@@ -56,7 +56,7 @@
             </ul>
             <p v-else class="text-center text-xl">No books available</p>
             <div class="flex justify-end pb-12">
-                <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-700 hover:contrast-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center">
+                <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-600 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center">
                     <svg class="h-8 w-8"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="5" y1="12" x2="19" y2="12" /></svg>
                 </button>
             </div>

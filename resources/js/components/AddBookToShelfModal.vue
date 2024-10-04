@@ -16,33 +16,7 @@
                 <div class="p-4 md:p-5">
                     <form @submit.prevent="submitForm" class="space-y-4">
 
-                        <!-- Search -->
-                        <div>
-                            <label for="book" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Search for a Book <span class="text-red-600">*</span></label>
-                            <input
-                                v-model="form.bookTitle"
-                                @input="searchBooks"
-                                id="book"
-                                type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Enter book title"
-                                required
-                            />
-                        </div>
-
-                        <!-- Display search results -->
-                        <div v-if="searchResults.length">
-                            <ul class="border border-gray-300 rounded-lg max-h-40 overflow-y-auto">
-                                <li
-                                    v-for="(result, index) in searchResults"
-                                    :key="index"
-                                    @click="selectBook(result)"
-                                    class="p-2 text-white hover:text-black hover:bg-gray-200 cursor-pointer"
-                                >
-                                    {{ result.title }}
-                                </li>
-                            </ul>
-                        </div>
+                        <BookSearch :selectedBook="form.selectedBook" @book-selected="onBookSelected" />
 
                         <div v-if="form.selectedBook">
                             <p class="text-gray-700 dark:text-white"><strong>Selected Book:</strong> {{ form.selectedBook.title }}</p>
@@ -100,10 +74,11 @@
 <script>
 import axios from 'axios';
 import StarRating from './StarRating.vue';
+import BookSearch from './BookSearch.vue';
 
 export default {
     components: {
-      StarRating
+      StarRating, BookSearch
     },
     props: {
         isVisible: {
@@ -139,23 +114,8 @@ export default {
                 console.error('Error fetching statuses: ', e);
             }
         },
-        //TODO: Debounce | look at abort request
-        async searchBooks() {
-          if (this.form.bookTitle.length >= 2) {
-              try {
-                  const response = await axios.get(`/books/search?title=${this.form.bookTitle}`);
-                  this.searchResults = response.data;
-              } catch (e) {
-                console.error('Error searching for books: ', e);
-              }
-          } else {
-              this.searchResults = [];
-          }
-        },
-        selectBook(book) {
+        onBookSelected(book) {
           this.form.selectedBook = book;
-          this.form.bookTitle = book.title;
-          this.searchResults = [];
         },
         async submitForm() {
             try {
@@ -183,7 +143,7 @@ export default {
                 comment: '',
                 selectedBook: null,
                 selectedStatus: 'Want to Read',
-                rating: 0,
+                rating: null,
                 started_reading: null,
                 finished_reading: null,
             };
