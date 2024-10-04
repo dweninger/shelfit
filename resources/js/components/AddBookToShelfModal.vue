@@ -98,7 +98,6 @@ export default {
                 finished_reading: null,
             },
             csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            searchResults: [],
             statuses: [],
         };
     },
@@ -147,7 +146,6 @@ export default {
                 started_reading: null,
                 finished_reading: null,
             };
-            this.searchResults = [];
         },
         hideAddBookModal() {
             this.$emit('close');
