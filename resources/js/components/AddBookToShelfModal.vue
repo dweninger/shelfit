@@ -41,20 +41,14 @@
                             </div>
                         </div>
 
-                        <div class="w-fit mx-auto">
-                            <label class="block mb-2 text-sm font-medium text-white">Started - Finished</label>
-                            <div class="flex mx-auto">
-                                <input type="date"
-                                       class="p-1 text-sm text-center border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-600 border-gray-500 placeholder-gray-400 text-white appearance-none"
-                                        v-model="form.started_reading">
-
-                                <span class="font-bold text-center my-auto mx-2 text-white"> - </span>
-
-                                <input type="date"
-                                       class="p-1 text-sm text-center border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-600 border-gray-500 placeholder-gray-400 text-white appearance-none"
-                                        v-model="form.finished_reading">
-                            </div>
-                        </div>
+                        <DateRangePicker
+                            label="Started - Finished"
+                            :startDate="form.started_reading"
+                            :endDate="form.finished_reading"
+                            @update:startDate="form.started_reading = $event"
+                            @update:endDate="form.finished_reading = $event"
+                            :dark="true"
+                        />
 
                         <hr />
 
@@ -75,10 +69,13 @@
 import axios from 'axios';
 import StarRating from './StarRating.vue';
 import BookSearch from './BookSearch.vue';
+import DateRangePicker from "./DateRangePicker.vue";
 
 export default {
     components: {
-      StarRating, BookSearch
+        DateRangePicker,
+        StarRating,
+        BookSearch,
     },
     props: {
         isVisible: {
@@ -155,16 +152,4 @@ export default {
 };
 </script>
 
-<style scoped>
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-}
-
-/* For Firefox */
-input[type="date"] {
-    -moz-appearance: textfield;
-}
-
-</style>

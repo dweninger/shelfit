@@ -39,17 +39,14 @@
                             <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">{{ book.pivot.status ?? "Want to Read" }}</p>
 
                             <!-- Date Pickers -->
-                            <div class="flex mx-auto">
-                                <input type="date"
-                                       v-model="book.pivot.started_reading_at"
-                                       class="p-1 text-sm text-center text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none">
-
-                                <span class="font-bold text-center my-auto mx-2"> - </span>
-
-                                <input type="date"
-                                       v-model="book.pivot.finished_reading_at"
-                                       class="p-1 text-sm text-center text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none">
-                            </div>
+                            <DateRangePicker
+                                label=""
+                                :startDate="book.pivot.started_reading_at"
+                                :endDate="book.pivot.finished_reading_at"
+                                @update:startDate="(value) => updateBookDate(book, 'started_reading_at', value)"
+                                @update:endDate="(value) => updateBookDate(book, 'finished_reading_at', value)"
+                                :dark="false"
+                            />
                         </div>
                     </div>
                 </li>
@@ -73,10 +70,11 @@ import axios from "axios";
 import AddBookToShelfModal from "./AddBookToShelfModal.vue";
 import StarRating from "./StarRating.vue";
 import UpdateShelvedBookModal from "./UpdateShelvedBookModal.vue";
+import DateRangePicker from "./DateRangePicker.vue";
 
 export default {
     name: 'Dashboard',
-    components: {UpdateShelvedBookModal, StarRating, AddBookToShelfModal, Layout },
+    components: {DateRangePicker, UpdateShelvedBookModal, StarRating, AddBookToShelfModal, Layout },
     data() {
         return {
             books: [],
