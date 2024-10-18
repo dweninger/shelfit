@@ -64,75 +64,71 @@
     </div>
 </template>
 
-<script>
-import Layout from "./Layout.vue";
+<script setup>
+import {ref, onMounted} from "vue";
+import Layout from "../components/Layout.vue";
 import axios from "axios";
-import AddBookToShelfModal from "./AddBookToShelfModal.vue";
-import StarRating from "./StarRating.vue";
-import UpdateShelvedBookModal from "./UpdateShelvedBookModal.vue";
-import DateRangePicker from "./DateRangePicker.vue";
+import AddBookToShelfModal from "../components/AddBookToShelfModal.vue";
+import StarRating from "../components/StarRating.vue";
+import UpdateShelvedBookModal from "../components/UpdateShelvedBookModal.vue";
+import DateRangePicker from "../components/DateRangePicker.vue";
 
-export default {
-    name: 'Dashboard',
-    components: {DateRangePicker, UpdateShelvedBookModal, StarRating, AddBookToShelfModal, Layout },
-    data() {
-        return {
-            books: [],
-            isAddBookModalVisible: false,
-            isUpdateModalVisible: false,
-            selectedBook: {},
-        };
-    },
-    mounted() {
-        this.getBooks();
-    },
-    computed: {
+const books = ref([])
+const isAddBookModalVisible = ref(false)
+const isUpdateModalVisible = ref(false)
+const selectedBook = ref({})
 
-    },
-    methods: {
-        statusColor(status) {
-            switch (status){
-                case 'Completed':
-                    return 'text-green-800';
-                case 'Did Not Finish':
-                    return 'text-red-800';
-                default:
-                    return 'text-yellow-800';
-            }
-        },
-        async getBooks() {
-            try {
-                const response = await axios.get("/books");
-                this.books = response.data;
-            } catch (error) {
-                console.error("Error fetching books:", error);
-                this.books = null;
-            }
-        },
-        hideAddBookModal() {
-            this.isAddBookModalVisible = false;
-        },
-        showAddBookModal() {
-            this.isAddBookModalVisible = true;
-        },
-        handleBookAdded() {
-            this.getBooks();
-            this.hideAddBookModal();
-        },
-        hideUpdateModal() {
-            this.selectedBook = {};
-            this.isUpdateModalVisible = false;
-        },
-        showUpdateModal(book) {
-            this.selectedBook = book;
-            this.isUpdateModalVisible = true;
-        },
-        handleBookUpdated() {
-            this.selectedBook = {};
-            this.getBooks();
-            this.hideUpdateModal();
-        },
+onMounted(() => {
+    getBooks();
+});
+const statusColor = (status) => {
+    switch (status){
+        case 'Completed':
+            return 'text-green-800';
+        case 'Did Not Finish':
+            return 'text-red-800';
+        default:
+            return 'text-yellow-800';
     }
+};
+
+const getBooks = async () => {
+    try {
+        const response = await axios.get("/books");
+        books.value = response.data;
+    } catch (error) {
+        console.error("Error fetching books:", error);
+        books.value = null;
+    }
+};
+
+const hideAddBookModal = () => {
+    isAddBookModalVisible.value = false;
+};
+
+const showAddBookModal = () => {
+    isAddBookModalVisible.value = true;
+};
+
+const handleBookAdded = () => {
+    getBooks();
+    hideAddBookModal();
+};
+
+const hideUpdateModal = () => {
+    selectedBook.value = {};
+    isUpdateModalVisible.value = false;
+};
+
+const showUpdateModal = (book) => {
+    selectedBook.value = book;
+    isUpdateModalVisible.value = true;
+};
+
+const handleBookUpdated = () => {
+    selectedBook.value = {};
+    getBooks();
+    hideUpdateModal();
 };
 </script>
 

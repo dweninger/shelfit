@@ -1,8 +1,8 @@
 import { createApp } from 'vue';
 import axios from 'axios';
 import '../css/app.css';
-import Dashboard from './components/Dashboard.vue';
-import Home from "./components/Home.vue";
+import Dashboard from './pages/Dashboard.vue';
+import Home from "./pages/Home.vue";
 
 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
