@@ -27,36 +27,37 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: {
+<script setup>
+
+import {ref, watch} from "vue";
+
+const props = defineProps({
       modelValue: {
           type: Number,
           default: 0,
       }
-    },
-    data() {
-        return {
-            currentRating: this.modelValue,
-            hoveredRating: null,
-        };
-    },
-    methods: {
-        setRating(star) {
-            this.currentRating = star;
-            this.$emit('update:modelValue', star);
-        },
-        hoverRating(star) {
-            this.hoveredRating = star;
-        },
-        resetHover() {
-            this.hoveredRating = null;
-        }
-    },
-    watch: {
-        modelValue(newRating) {
-            this.currentRating = newRating;
-        }
-    }
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const currentRating = ref(props.modelValue);
+const hoveredRating = ref(null);
+
+const setRating = (star) => {
+    currentRating.value = star;
+    emit('update:modelValue', star);
 };
+
+const hoverRating = (star) => {
+    hoveredRating.value = star;
+};
+
+const resetHover = () => {
+    hoveredRating.value = null;
+};
+
+watch( () => props.modelValue, (newRating) => {
+        currentRating.value = newRating;
+});
+
 </script>
