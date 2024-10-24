@@ -1,5 +1,4 @@
 <template>
-    <!-- Search -->
     <div>
         <label for="book" class="block mb-2 text-sm font-medium text-white">Search for a Book <span class="text-red-600">*</span></label>
         <input
@@ -13,7 +12,6 @@
         />
     </div>
 
-    <!-- Display search results -->
     <div v-if="searchResults.length">
         <ul class="border border-gray-300 rounded-lg max-h-40 overflow-y-auto">
             <li
@@ -30,42 +28,38 @@
 </template>
 
 
-<script>
+<script setup>
 import {debounce} from 'lodash';
 import axios from 'axios';
+import {ref} from "vue";
 
-export default {
-    props: {
-        selectedBook : {
-            type: Object,
-            default: null,
+const props = defineProps( {
+    selectedBook : {
+        type: Object,
+        default: null,
+    }
+});
+const emit = defineEmits(['book-selected']);
+
+const bookTitle = ref('')
+const searchResults = ref([]);
+
+const searchBooks = debounce(async () => {
+    if (bookTitle.value.length >= 2) {
+        try {
+            const response = await axios.get(`/books/search?title=${bookTitle.value}`);
+            searchResults.value = response.data;
+        } catch (e) {
+            console.error('Error searching for books: ', e);
         }
-    },
-    emits: ['book-selected'],
-    data() {
-        return {
-            bookTitle: '',
-            searchResults: [],
-        }
-    },
-    methods: {
-        searchBooks: debounce(async function () {
-            if (this.bookTitle.length >= 2) {
-                try {
-                    const response = await axios.get(`/books/search?title=${this.bookTitle}`);
-                    this.searchResults = response.data;
-                } catch (e) {
-                    console.error('Error searching for books: ', e);
-                }
-            } else {
-                this.searchResults = [];
-            }
-        }, 500),
-        selectBook(book) {
-            this.$emit('book-selected', book);
-            this.bookTitle = book.title;
-            this.searchResults = [];
-        },
-    },
-}
+    } else {
+        searchResults.value = [];
+    }
+}, 100);
+
+const selectBook = (book) => {
+    emit('book-selected', book);
+    bookTitle.value = book.title;
+    searchResults.value = [];
+};
 </script>
