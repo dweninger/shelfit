@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isVisible" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="props.isVisible" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative rounded-lg shadow bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
