@@ -39,50 +39,49 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios';
+import {ref} from "vue";
 
-export default {
-    props: {
-        isVisible: {
-            type: Boolean,
-            default: false,
-        },
+
+const props = defineProps({
+    isVisible: {
+        type: Boolean,
+        default: false,
     },
-    data() {
-        return {
-            name: '',
-            email: '',
-            password: '',
-            password_confirmation: '',
-            csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        };
-    },
-    methods: {
-        async submitForm() {
-            try {
-                const response = await axios.post('/register', {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
-                    password_confirmation: this.password_confirmation,
-                }, {
-                    headers: {
-                        'X-CSRF-TOKEN': this.csrfToken,
-                    },
-                });
-                this.name = '';
-                this.email = '';
-                this.password = '';
-                this.password_confirmation = '';
-                this.$emit('registered', response.data);
-            } catch (error) {
-                console.error('Registration error:', error.response?.data || error.message);
-            }
-        },
-        hideRegisterModal() {
-            this.$emit('close');
-        },
-    },
-};
+});
+
+const emit = defineEmits(['registered', 'close']);
+
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const password_confirmation = ref('');
+const csrfToken = ref(document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+const submitForm = async () => {
+    try {
+        const response = await axios.post('/register', {
+            name: name.value,
+            email: email.value,
+            password: password.value,
+            password_confirmation: password_confirmation.value,
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': csrfToken.value,
+            },
+        });
+        name.value = '';
+        email.value = '';
+        password.value = '';
+        password_confirmation.value = '';
+        emit('registered', response.data);
+    } catch (error) {
+        console.error('Registration error:', error.response?.data || error.message);
+    }
+}
+
+const hideRegisterModal = () => {
+    emit('close');
+}
 </script>
