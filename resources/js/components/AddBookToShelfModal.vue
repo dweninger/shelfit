@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isVisible" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="props.isVisible" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative rounded-lg shadow bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
@@ -65,90 +65,88 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios';
 import StarRating from './StarRating.vue';
 import BookSearch from './BookSearch.vue';
 import DateRangePicker from "./DateRangePicker.vue";
+import {onMounted, ref} from "vue";
 
-export default {
-    components: {
-        DateRangePicker,
-        StarRating,
-        BookSearch,
-    },
-    props: {
+const props = defineProps({
         isVisible: {
             type: Boolean,
             default: false,
         },
-    },
-    data() {
-        return {
-            form: {
-                bookTitle: '',
-                selectedBook: null,
-                comment: '',
-                selectedStatus: 'Want to Read',
-                rating: null,
-                started_reading: null,
-                finished_reading: null,
-            },
-            csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            statuses: [],
-        };
-    },
-    mounted() {
-        this.getStatuses();
-    },
-    methods: {
-        async getStatuses() {
-            try {
-                const response = await axios.get(`/book-user/statuses`);
-                this.statuses = response.data.statuses;
-            } catch (e) {
-                console.error('Error fetching statuses: ', e);
+});
+
+const emit = defineEmits(['book-added', 'close']);
+
+const form = ref({
+    bookTitle: '',
+    selectedBook: null,
+    comment: '',
+    selectedStatus: 'Want to Read',
+    rating: null,
+    started_reading: null,
+    finished_reading: null,
+});
+
+const csrfToken = ref(document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+const statuses = ref([]);
+
+onMounted(() => {
+    getStatuses();
+});
+
+const getStatuses = async () => {
+    try {
+        const response = await axios.get(`/book-user/statuses`);
+        statuses.value = response.data.statuses;
+    } catch (e) {
+        console.error('Error fetching statuses: ', e);
+    }
+};
+
+const onBookSelected = (book) => {
+  form.value.selectedBook = book;
+};
+
+const submitForm = async () => {
+    try {
+        await axios.post('/book-user', {
+            book_id: form.value.selectedBook.id,
+            comment: form.value.comment,
+            status: form.value.selectedStatus,
+            rating: form.value.rating,
+            started_reading_at: form.value.started_reading,
+            finished_reading_at: form.value.finished_reading,
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': csrfToken.value
             }
-        },
-        onBookSelected(book) {
-          this.form.selectedBook = book;
-        },
-        async submitForm() {
-            try {
-                await axios.post('/book-user', {
-                    book_id: this.form.selectedBook.id,
-                    comment: this.form.comment,
-                    status: this.form.selectedStatus,
-                    rating: this.form.rating,
-                    started_reading_at: this.form.started_reading,
-                    finished_reading_at: this.form.finished_reading,
-                }, {
-                    headers: {
-                        'X-CSRF-TOKEN': this.csrfToken
-                    }
-                });
-                this.$emit('book-added', this.form.selectedBook);
-                this.resetForm();
-            } catch (error) {
-                console.error('Error adding book:', error.response?.data || error.message);
-            }
-        },
-        resetForm() {
-            this.form = {
-                bookTitle: '',
-                comment: '',
-                selectedBook: null,
-                selectedStatus: 'Want to Read',
-                rating: null,
-                started_reading: null,
-                finished_reading: null,
-            };
-        },
-        hideAddBookModal() {
-            this.$emit('close');
-            this.resetForm();
-        },
-    },
+        });
+        emit('book-added', form.value.selectedBook);
+        resetForm();
+    } catch (error) {
+        console.error('Error adding book:', error.response?.data || error.message);
+    }
+};
+
+const resetForm = () => {
+    form.value = {
+        bookTitle: '',
+        comment: '',
+        selectedBook: null,
+        selectedStatus: 'Want to Read',
+        rating: null,
+        started_reading: null,
+        finished_reading: null,
+    };
+};
+
+const hideAddBookModal = () => {
+    emit('close');
+    resetForm();
 };
 </script>
 
