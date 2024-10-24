@@ -20,7 +20,7 @@
                         type="button"
                         class="text-white focus:outline-none font-medium rounded text-sm px-5 py-2.5 text-center me-2 mb-2 bg-gray-600 hover:bg-gray-500 focus:ring-gray-800"
                     >
-                        {{ user.name }}
+                        {{ user?.name }}
                     </button>
                     <div
                         v-if="dropdownOpen"
@@ -46,71 +46,70 @@
     </nav>
 </template>
 
-<script>
+<script setup>
 import LoginModal from "./LoginModal.vue";
 import RegisterModal from "./RegisterModal.vue";
 import axios from "axios";
+import {computed, onMounted, ref} from "vue";
 
-export default {
-    name: "NavBar",
-    components: { RegisterModal, LoginModal },
-    data() {
-        return {
-            dropdownOpen: false,
-            user: null,
-            isRegisterModalVisible: false,
-            isLoginModalVisible: false,
-        };
-    },
-    mounted() {
-        this.getUser();
-    },
-    methods: {
-        async getUser() {
-            try {
-                const response = await axios.get("/user");
-                this.user = response.data.user;
-            } catch (error) {
-                this.user = null;
-            }
-        },
-        toggleDropdown() {
-            this.dropdownOpen = !this.dropdownOpen;
-        },
-        async logout() {
-            try {
-                await axios.post('/logout');
-                this.getUser();
-            } catch (error) {
-                console.error('Logout failed:', error);
-            }
-        },
-        showRegisterModal() {
-            this.isRegisterModalVisible = true;
-        },
-        hideRegisterModal() {
-            this.isRegisterModalVisible = false;
-        },
-        showLoginModal() {
-            this.isLoginModalVisible = true;
-        },
-        hideLoginModal() {
-            this.isLoginModalVisible = false;
-        },
-        handleLogin(user) {
-            this.user = user;
-            this.isLoginModalVisible = false;
-            window.location.href = '/dashboard';
-        },
-        handleRegister(data) {
-            this.user = data.user;
-            this.isRegisterModalVisible = false;
-        },
-    },
-    computed: {
-        isAuthenticated() {
-            return !!this.user;
-        },
-    },
+const dropdownOpen = ref(false);
+const user = ref(null);
+const isRegisterModalVisible = ref(false);
+const isLoginModalVisible = ref(false);
+
+onMounted(() => {
+    getUser();
+});
+
+const getUser = async () => {
+    try {
+        const response = await axios.get("/user");
+        user.value = response?.data?.user;
+    } catch (error) {
+        user.value = null;
+    }
 };
+
+const toggleDropdown = () => {
+    dropdownOpen.value = !dropdownOpen.value;
+};
+
+const logout = async () => {
+    try {
+        await axios.post('/logout');
+        getUser();
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+};
+
+const showRegisterModal = () => {
+    isRegisterModalVisible.value = true;
+};
+
+const hideRegisterModal = () => {
+    isRegisterModalVisible.value = false;
+};
+
+const showLoginModal = () => {
+    isLoginModalVisible.value = true;
+};
+
+const hideLoginModal = () => {
+    isLoginModalVisible.value = false;
+};
+
+const handleLogin = (user) => {
+    user.value = user;
+    isLoginModalVisible.value = false;
+    window.location.href = '/dashboard';
+};
+
+const handleRegister = (data) => {
+    user.value = data.user;
+    isRegisterModalVisible.value = false;
+};
+
+const isAuthenticated = computed(() => !!user.value);
+
 </script>
