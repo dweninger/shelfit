@@ -42,7 +42,7 @@
 
         <!-- Register and Login Modals -->
         <RegisterModal :isVisible="isRegisterModalVisible" @close="hideRegisterModal" @registered="handleRegister" />
-        <LoginModal :isVisible="isLoginModalVisible" @close="hideLoginModal" @logged-in="handleLogin" />
+        <LoginModal :isVisible="isLoginModalVisible" @logged-in="handleLogin" />
     </nav>
 </template>
 
@@ -93,10 +93,6 @@ const hideRegisterModal = () => {
 
 const showLoginModal = () => {
     isLoginModalVisible.value = true;
-};
-
-const hideLoginModal = () => {
-    isLoginModalVisible.value = false;
 };
 
 const handleLogin = (user) => {
