@@ -1,5 +1,5 @@
 <template>
-<popup-modal :isVisible="isVisible" @close="onCloseModal">
+<popup-modal title="Login" :isVisible="isVisible" @close="onCloseModal">
     <div class="p-4 md:p-5">
         <form @submit.prevent="submitForm" class="space-y-4">
             <div>

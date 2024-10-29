@@ -4,7 +4,7 @@
             <div class="relative rounded-lg shadow bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
                     <h3 class="text-xl font-semibold text-white">
-                        Login
+                        {{title}}
                     </h3>
                     <button
                         @click="hideModal"
@@ -40,6 +40,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    title: {
+        type: String,
+        default: 'Modal',
+    }
 });
 
 const emit = defineEmits(['close']);
