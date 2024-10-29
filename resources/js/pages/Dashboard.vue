@@ -20,7 +20,7 @@
                         <!-- Rating, Edit Button, and Date Section -->
                         <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
                             <!-- Edit Button -->
-                            <button class="absolute top-1 right-2" @click="showUpdateModal(book)">
+                            <button class="absolute top-1 right-2" @click="onEditBookButtonPressed(book)">
                                 <svg class="h-8 w-8 text-gray-700" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                      stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" />
@@ -66,17 +66,19 @@
 
 <script setup>
 import {ref, onMounted} from "vue";
-import Layout from "../components/Layout.vue";
 import axios from "axios";
+import Layout from "../components/Layout.vue";
 import AddBookToShelfModal from "../components/AddBookToShelfModal.vue";
-import StarRating from "../components/StarRating.vue";
 import UpdateShelvedBookModal from "../components/UpdateShelvedBookModal.vue";
+import StarRating from "../components/StarRating.vue";
 import DateRangePicker from "../components/DateRangePicker.vue";
+import modalVisibility from "../composables/modalVisibility";
 
 const books = ref([])
-const isAddBookModalVisible = ref(false)
-const isUpdateModalVisible = ref(false)
 const selectedBook = ref({})
+
+const { isModalVisible: isAddBookModalVisible, showModal: showAddBookModal, hideModal: hideAddBookModal } = modalVisibility();
+const { isModalVisible: isUpdateModalVisible, showModal: showUpdateModal, hideModal: hideUpdateModal } = modalVisibility();
 
 onMounted(() => {
     getBooks();
@@ -102,27 +104,9 @@ const getBooks = async () => {
     }
 };
 
-const hideAddBookModal = () => {
-    isAddBookModalVisible.value = false;
-};
-
-const showAddBookModal = () => {
-    isAddBookModalVisible.value = true;
-};
-
 const handleBookAdded = () => {
     getBooks();
     hideAddBookModal();
-};
-
-const hideUpdateModal = () => {
-    selectedBook.value = {};
-    isUpdateModalVisible.value = false;
-};
-
-const showUpdateModal = (book) => {
-    selectedBook.value = book;
-    isUpdateModalVisible.value = true;
 };
 
 const handleBookUpdated = () => {
@@ -130,20 +114,14 @@ const handleBookUpdated = () => {
     getBooks();
     hideUpdateModal();
 };
+
+const onEditBookButtonPressed = (book) => {
+    selectedBook.value = book;
+    showUpdateModal()
+};
 </script>
 
 <style scoped>
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-}
-
-/* For Firefox */
-input[type="date"] {
-    -moz-appearance: textfield;
-}
-
 .scrollable-ul::-webkit-scrollbar {
     width: 8px;
 }

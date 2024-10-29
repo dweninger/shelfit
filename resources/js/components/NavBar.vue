@@ -51,7 +51,7 @@ import LoginModal from "./LoginModal.vue";
 import RegisterModal from "./RegisterModal.vue";
 import axios from "axios";
 import {computed, onMounted, ref} from "vue";
-import modalVisibility from "@/composables/modalVisibility";
+import modalVisibility from "../composables/modalVisibility";
 
 const dropdownOpen = ref(false);
 const user = ref(null);
