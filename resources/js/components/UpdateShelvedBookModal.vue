@@ -2,15 +2,7 @@
     <popup-modal :title="form.selectedBook.title" :isVisible="isVisible" @close="hideUpdateModal">
         <div class="p-4 md:p-5">
             <form @submit.prevent="updateShelvedBook" class="space-y-4">
-
-                <div>
-                    <label for="comment" class="block mb-2 text-sm font-medium text-white">Comment</label>
-                    <textarea
-                        v-model="form.comment"
-                        id="comment"
-                        class="border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                        placeholder="I liked the book a lot. The twist was very good." />
-                </div>
+                <form-text-area v-model="form.comment" field="comment" label="Comment" placeholder="I liked the book a lot. The twist was very good." />
 
                 <div class="flex w-full justify-between items-center">
                     <div class="w-fit px-4">
@@ -68,6 +60,7 @@ import axios from 'axios';
 import StarRating from './StarRating.vue';
 import DateRangePicker from "./DateRangePicker.vue";
 import PopupModal from "./PopupModal.vue";
+import FormTextArea from "./FormTextArea.vue";
 
 const props = defineProps({
     isVisible: {
