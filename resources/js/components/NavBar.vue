@@ -55,10 +55,9 @@ import modalVisibility from "@/composables/modalVisibility";
 
 const dropdownOpen = ref(false);
 const user = ref(null);
-const isRegisterModalVisible = ref(false);
 
 const { isModalVisible: isLoginModalVisible, showModal: showLoginModal, hideModal: hideLoginModal } = modalVisibility();
-
+const { isModalVisible: isRegisterModalVisible, showModal: showRegisterModal, hideModal: hideRegisterModal } = modalVisibility();
 
 onMounted(() => {
     getUser();
@@ -86,23 +85,14 @@ const logout = async () => {
     }
 };
 
-const showRegisterModal = () => {
-    isRegisterModalVisible.value = true;
-};
-
-const hideRegisterModal = () => {
-    isRegisterModalVisible.value = false;
-};
-
 const handleLogin = (user) => {
     user.value = user;
-    isLoginModalVisible.value = false;
     window.location.href = '/dashboard';
 };
 
 const handleRegister = (data) => {
     user.value = data.user;
-    isRegisterModalVisible.value = false;
+    window.location.href = '/dashboard';
 };
 
 const isAuthenticated = computed(() => !!user.value);
