@@ -42,7 +42,7 @@
 
         <!-- Register and Login Modals -->
         <RegisterModal :isVisible="isRegisterModalVisible" @close="hideRegisterModal" @registered="handleRegister" />
-        <LoginModal :isVisible="isLoginModalVisible" @logged-in="handleLogin" />
+        <LoginModal :isVisible="isLoginModalVisible" @close="hideLoginModal" @logged-in="handleLogin" />
     </nav>
 </template>
 
@@ -51,11 +51,14 @@ import LoginModal from "./LoginModal.vue";
 import RegisterModal from "./RegisterModal.vue";
 import axios from "axios";
 import {computed, onMounted, ref} from "vue";
+import modalVisibility from "@/composables/modalVisibility";
 
 const dropdownOpen = ref(false);
 const user = ref(null);
 const isRegisterModalVisible = ref(false);
-const isLoginModalVisible = ref(false);
+
+const { isModalVisible: isLoginModalVisible, showModal: showLoginModal, hideModal: hideLoginModal } = modalVisibility();
+
 
 onMounted(() => {
     getUser();
@@ -89,10 +92,6 @@ const showRegisterModal = () => {
 
 const hideRegisterModal = () => {
     isRegisterModalVisible.value = false;
-};
-
-const showLoginModal = () => {
-    isLoginModalVisible.value = true;
 };
 
 const handleLogin = (user) => {

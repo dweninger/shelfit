@@ -1,5 +1,5 @@
 <template>
-<popup-modal :isVisible="isVisible">
+<popup-modal :isVisible="isVisible" @close="onCloseModal">
     <div class="p-4 md:p-5">
         <form @submit.prevent="submitForm" class="space-y-4">
             <div>
@@ -69,4 +69,8 @@ const submitForm = async () => {
         console.error('Login error:', error.response?.data || error.message);
     }
 };
+
+const onCloseModal = () => {
+    emit('close');
+}
 </script>

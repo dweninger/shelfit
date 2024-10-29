@@ -35,8 +35,6 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
-
 const props = defineProps({
     isVisible: {
         type: Boolean,
@@ -46,13 +44,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-const isVisible = ref(props.isVisible);
-
-watch(() => props.isVisible, (newVal) => {
-    isVisible.value = newVal;
-});
-
 const hideModal = () => {
-    isVisible.value = false;
+    emit('close');
 }
 </script>
