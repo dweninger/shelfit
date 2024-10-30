@@ -3,7 +3,7 @@
         <div class="p-4 md:p-5">
             <form @submit.prevent="submitForm" class="space-y-4">
 
-                <BookSearch :selectedBook="form.selectedBook" @book-selected="onBookSelected" />
+                <book-search :selectedBook="form.selectedBook" @book-selected="onBookSelected" />
 
                 <div v-if="form.selectedBook">
                     <p class="text-white"><strong>Selected Book:</strong> {{ form.selectedBook.title }}</p>
@@ -11,20 +11,16 @@
                 <form-text-area v-model="form.comment" field="comment" label="Comment" placeholder="I liked the book a lot. The twist was very good." />
 
                 <div class="flex w-full justify-between items-center">
-                    <div class="w-fit px-4">
-                        <label for="status" class="block mb-2 text-sm font-medium text-white">Status</label>
-                        <select v-model="form.selectedStatus" id="status" class="border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white">
-                            <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
-                        </select>
-                    </div>
+
+                    <form-select v-model="form.selectedStatus" :options="statuses" label="Status" field="status" />
 
                     <div class="w-fit px-4">
                         <label class="block mb-2 text-sm font-medium text-white">Rating</label>
-                        <StarRating v-model="form.rating" />
+                        <star-rating v-model="form.rating" />
                     </div>
                 </div>
 
-                <DateRangePicker
+                <date-range-picker
                     label="Started - Finished"
                     :startDate="form.started_reading"
                     :endDate="form.finished_reading"
@@ -55,6 +51,7 @@ import DateRangePicker from "./DateRangePicker.vue";
 import {onMounted, ref} from "vue";
 import PopupModal from "./PopupModal.vue";
 import FormTextArea from "./FormTextArea.vue";
+import FormSelect from "./FormSelect.vue";
 
 const props = defineProps({
         isVisible: {
