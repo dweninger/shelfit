@@ -9,7 +9,7 @@
                     <button @click="showRegisterModal" type="button" class="text-white focus:outline-none focus:ring-4 font-medium rounded text-sm px-5 py-2.5 text-center me-2 mb-2 bg-green-600 hover:bg-green-700 focus:ring-green-800">
                         Register
                     </button>
-                    <button @click="showLoginModal" type="button" class="text-white  focus:outline-none focus:ring-4 font-medium rounded text-sm px-5 py-2.5 text-center me-2 mb-2 bg-green-600 hover:bg-green-700 focus:ring-green-800">
+                    <button @click="showLoginModal" type="button" class="text-white focus:outline-none focus:ring-4 font-medium rounded text-sm px-5 py-2.5 text-center me-2 mb-2 bg-green-600 hover:bg-green-700 focus:ring-green-800">
                         Login
                     </button>
                 </div>
@@ -41,8 +41,8 @@
         </div>
 
         <!-- Register and Login Modals -->
-        <RegisterModal :isVisible="isRegisterModalVisible" @close="hideRegisterModal" @registered="handleRegister" />
-        <LoginModal :isVisible="isLoginModalVisible" @close="hideLoginModal" @logged-in="handleLogin" />
+        <register-modal :isVisible="isRegisterModalVisible" @close="hideRegisterModal" @registered="handleRegister" />
+        <login-modal :isVisible="isLoginModalVisible" @close="hideLoginModal" @logged-in="handleLogin" />
     </nav>
 </template>
 

@@ -21,25 +21,19 @@
                         <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
                             <!-- Edit Button -->
                             <button class="absolute top-1 right-2" @click="onEditBookButtonPressed(book)">
-                                <svg class="h-8 w-8 text-gray-700" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                    <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                                    <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                                    <line x1="16" y1="5" x2="19" y2="8" />
-                                </svg>
+                                <edit-icon />
                             </button>
 
                             <!-- Star Rating -->
                             <div class="flex justify-center mb-1">
-                                <StarRating :modelValue="book.pivot.rating" />
+                                <star-rating :modelValue="book.pivot.rating" />
                             </div>
 
                             <!-- Status -->
                             <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">{{ book.pivot.status ?? "Want to Read" }}</p>
 
                             <!-- Date Pickers -->
-                            <DateRangePicker
+                            <date-range-picker
                                 label=""
                                 :startDate="book.pivot.started_reading_at"
                                 :endDate="book.pivot.finished_reading_at"
@@ -54,13 +48,13 @@
             <p v-else class="text-center text-xl">No books available</p>
             <div class="flex justify-end pb-12">
                 <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-600 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center">
-                    <svg class="h-8 w-8"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="5" y1="12" x2="19" y2="12" /></svg>
+                    <plus-icon />
                 </button>
             </div>
         </div>
 
-        <AddBookToShelfModal :isVisible="isAddBookModalVisible" @close="hideAddBookModal" @book-added="handleBookAdded"/>
-        <UpdateShelvedBookModal :isVisible="isUpdateModalVisible" :selectedBook="selectedBook" @close="hideUpdateModal" @book-updated="handleBookUpdated"/>
+        <add-book-to-shelf-modal :isVisible="isAddBookModalVisible" @close="hideAddBookModal" @book-added="handleBookAdded"/>
+        <update-shelved-book-modal :isVisible="isUpdateModalVisible" :selectedBook="selectedBook" @close="hideUpdateModal" @book-updated="handleBookUpdated"/>
     </div>
 </template>
 
@@ -73,6 +67,8 @@ import UpdateShelvedBookModal from "../components/UpdateShelvedBookModal.vue";
 import StarRating from "../components/StarRating.vue";
 import DateRangePicker from "../components/DateRangePicker.vue";
 import modalVisibility from "../composables/modalVisibility";
+import EditIcon from "../components/icons/EditIcon.vue";
+import PlusIcon from "../components/icons/PlusIcon.vue";
 
 const books = ref([])
 const selectedBook = ref({})
