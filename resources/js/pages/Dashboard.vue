@@ -4,46 +4,50 @@
         <h1 class="text-4xl font-semibold my-4 text-white text-center">Your Shelved Books</h1>
         <div class="w-fit mx-auto">
             <ul class="scrollable-ul overflow-y-auto h-[40rem] shadow-2xl rounded-xl border-2 border-gray-400 p-4" v-if="books && books.length">
-                <li v-for="(book, index) in books" :key="index">
-                    <div class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-stone-300">
-                        <!-- Book Image -->
-                        <img class="w-24 h-auto rounded-l-lg object-cover"
-                             :src="book.cover_image" :alt="book.title + ' cover'">
+                <draggable v-model="books" item-key="id" class="drag-item">
+                    <template #item="{element: book, index}">
+                    <li>
+                        <div class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-stone-300">
+                            <!-- Book Image -->
+                            <img class="w-24 h-auto rounded-l-lg object-cover"
+                                 :src="book.cover_image" :alt="book.title + ' cover'">
 
-                        <!-- Book Info Section -->
-                        <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
-                            <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">{{ book.title }}</h5>
-                            <p class="mb-2">{{book.author}} | {{book.published_at.split('-')[0]}}</p>
-                            <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">{{ book.pivot.comment }}</p>
-                        </div>
-
-                        <!-- Rating, Edit Button, and Date Section -->
-                        <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
-                            <!-- Edit Button -->
-                            <button class="absolute top-1 right-2" @click="onEditBookButtonPressed(book)">
-                                <edit-icon />
-                            </button>
-
-                            <!-- Star Rating -->
-                            <div class="flex justify-center mb-1">
-                                <star-rating :modelValue="book.pivot.rating" />
+                            <!-- Book Info Section -->
+                            <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
+                                <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">{{ book.title }}</h5>
+                                <p class="mb-2">{{book.author}} | {{book.published_at.split('-')[0]}}</p>
+                                <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">{{ book.pivot.comment }}</p>
                             </div>
 
-                            <!-- Status -->
-                            <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">{{ book.pivot.status ?? "Want to Read" }}</p>
+                            <!-- Rating, Edit Button, and Date Section -->
+                            <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
+                                <!-- Edit Button -->
+                                <button class="absolute top-1 right-2" @click="onEditBookButtonPressed(book)">
+                                    <edit-icon />
+                                </button>
 
-                            <!-- Date Pickers -->
-                            <date-range-picker
-                                label=""
-                                :startDate="book.pivot.started_reading_at"
-                                :endDate="book.pivot.finished_reading_at"
-                                @update:startDate="(value) => updateBookDate(book, 'started_reading_at', value)"
-                                @update:endDate="(value) => updateBookDate(book, 'finished_reading_at', value)"
-                                :dark="false"
-                            />
+                                <!-- Star Rating -->
+                                <div class="flex justify-center mb-1">
+                                    <star-rating :modelValue="book.pivot.rating" />
+                                </div>
+
+                                <!-- Status -->
+                                <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">{{ book.pivot.status ?? "Want to Read" }}</p>
+
+                                <!-- Date Pickers -->
+                                <date-range-picker
+                                    label=""
+                                    :startDate="book.pivot.started_reading_at"
+                                    :endDate="book.pivot.finished_reading_at"
+                                    @update:startDate="(value) => updateBookDate(book, 'started_reading_at', value)"
+                                    @update:endDate="(value) => updateBookDate(book, 'finished_reading_at', value)"
+                                    :dark="false"
+                                />
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                    </template>
+                </draggable>
             </ul>
             <p v-else class="text-center text-xl">No books available</p>
             <div class="flex justify-end pb-12">
@@ -69,6 +73,7 @@ import DateRangePicker from "../components/DateRangePicker.vue";
 import modalVisibility from "../composables/modalVisibility";
 import EditIcon from "../components/icons/EditIcon.vue";
 import PlusIcon from "../components/icons/PlusIcon.vue";
+import draggable from "vuedraggable";
 
 const books = ref([])
 const selectedBook = ref({})
@@ -137,4 +142,7 @@ const onEditBookButtonPressed = (book) => {
     background-color: darkgray;
 }
 
+.drag-item:hover {
+    cursor: move;
+}
 </style>
