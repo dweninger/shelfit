@@ -62,8 +62,8 @@
 import {ref, onMounted} from "vue";
 import axios from "axios";
 import Layout from "../components/Layout.vue";
-import AddBookToShelfModal from "../components/AddBookToShelfModal.vue";
-import UpdateShelvedBookModal from "../components/UpdateShelvedBookModal.vue";
+import AddBookToShelfModal from "../components/modals/AddBookToShelfModal.vue";
+import UpdateShelvedBookModal from "../components/modals/UpdateShelvedBookModal.vue";
 import StarRating from "../components/StarRating.vue";
 import DateRangePicker from "../components/DateRangePicker.vue";
 import modalVisibility from "../composables/modalVisibility";

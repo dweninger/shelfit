@@ -47,8 +47,8 @@
 </template>
 
 <script setup>
-import LoginModal from "./LoginModal.vue";
-import RegisterModal from "./RegisterModal.vue";
+import LoginModal from "./modals/LoginModal.vue";
+import RegisterModal from "./modals/RegisterModal.vue";
 import axios from "axios";
 import {computed, onMounted, ref} from "vue";
 import modalVisibility from "../composables/modalVisibility";

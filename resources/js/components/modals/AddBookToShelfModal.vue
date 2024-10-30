@@ -45,13 +45,13 @@
 
 <script setup>
 import axios from 'axios';
-import StarRating from './StarRating.vue';
-import BookSearch from './BookSearch.vue';
-import DateRangePicker from "./DateRangePicker.vue";
+import StarRating from '../StarRating.vue';
+import BookSearch from '../BookSearch.vue';
+import DateRangePicker from "../DateRangePicker.vue";
 import {onMounted, ref} from "vue";
 import PopupModal from "./PopupModal.vue";
-import FormTextArea from "./FormTextArea.vue";
-import FormSelect from "./FormSelect.vue";
+import FormTextArea from "../form/FormTextArea.vue";
+import FormSelect from "../form/FormSelect.vue";
 
 const props = defineProps({
         isVisible: {

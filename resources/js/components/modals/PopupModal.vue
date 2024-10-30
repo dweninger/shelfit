@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import XIcon from "./icons/XIcon.vue";
+import XIcon from "../icons/XIcon.vue";
 
 const props = defineProps({
     isVisible: {

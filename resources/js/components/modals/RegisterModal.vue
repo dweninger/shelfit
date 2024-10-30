@@ -16,7 +16,7 @@
 import axios from 'axios';
 import {ref} from "vue";
 import PopupModal from "./PopupModal.vue";
-import FormInput from "./FormInput.vue";
+import FormInput from "../form/FormInput.vue";
 
 const props = defineProps({
     isVisible: {
