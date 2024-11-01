@@ -14,19 +14,15 @@
     </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 const model = defineModel();
-const props = defineProps({
-    field: {
-        type: String
-    },
-    label: {
-        type: String
-    },
-    placeholder: {
-        type: String
-    },
-});
+type Props = {
+    field: string;
+    label: string;
+    placeholder: string;
+}
+const props = defineProps<Props>();
+
 </script>
 
 <style scoped>

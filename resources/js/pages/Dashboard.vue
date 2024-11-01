@@ -1,9 +1,9 @@
 <template>
     <div class="dashboard min-h-screen bg-gray-700">
         <layout></layout>
-        <h1 class="text-4xl font-semibold my-4 text-white text-center">Your Shelved Books</h1>
         <div class="w-fit mx-auto">
-            <ul class="scrollable-ul overflow-y-auto h-[40rem] shadow-2xl rounded-xl border-2 border-gray-400 p-4" v-if="books && books.length">
+            <bookshelf-top-bar :books="books" />
+            <ul class="scrollable-ul overflow-y-auto max-h-[60vh] min-h-50 p-4" v-if="books && books.length">
                 <draggable v-model="books" item-key="id" class="drag-item">
                     <template #item="{element: book, index}">
                     <li>
@@ -51,7 +51,7 @@
             </ul>
             <p v-else class="text-center text-xl">No books available</p>
             <div class="flex justify-end pb-12">
-                <button @click="showAddBookModal" class="font-bold mt-2 text-white bg-blue-600 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center">
+                <button @click="showAddBookModal" class="font-bold mt-4 text-white bg-blue-600 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm p-0.5 text-center">
                     <plus-icon />
                 </button>
             </div>
@@ -63,17 +63,18 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, onBeforeMount} from "vue";
 import axios from "axios";
 import Layout from "../components/Layout.vue";
 import AddBookToShelfModal from "../components/modals/AddBookToShelfModal.vue";
 import UpdateShelvedBookModal from "../components/modals/UpdateShelvedBookModal.vue";
 import StarRating from "../components/StarRating.vue";
 import DateRangePicker from "../components/DateRangePicker.vue";
-import modalVisibility from "../composables/modalVisibility";
 import EditIcon from "../components/icons/EditIcon.vue";
 import PlusIcon from "../components/icons/PlusIcon.vue";
+import modalVisibility from "../composables/modalVisibility";
 import draggable from "vuedraggable";
+import BookshelfTopBar from "../components/BookshelfTopBar.vue";
 
 const books = ref([])
 const selectedBook = ref({})
@@ -81,9 +82,10 @@ const selectedBook = ref({})
 const { isModalVisible: isAddBookModalVisible, showModal: showAddBookModal, hideModal: hideAddBookModal } = modalVisibility();
 const { isModalVisible: isUpdateModalVisible, showModal: showUpdateModal, hideModal: hideUpdateModal } = modalVisibility();
 
-onMounted(() => {
+onBeforeMount(() => {
     getBooks();
-});
+})
+
 const statusColor = (status) => {
     switch (status){
         case 'Completed':
