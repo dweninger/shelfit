@@ -6,7 +6,7 @@
                    class="p-1 text-sm text-center border rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 appearance-none"
                    :class="{
                         'bg-gray-600 border-gray-500 text-white': props.dark,
-                        'text-black bg-white border-gray-400': !props.dark,
+                        'text-black bg-slate-200 border-gray-400': !props.dark,
                    }"
                    :value="props.startDate"
                    @input="updateStartDate($event.target.value)">
@@ -22,7 +22,7 @@
                    class="p-1 text-sm text-center border rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 appearance-none"
                    :class="{
                         'bg-gray-600 border-gray-500 text-white': props.dark,
-                        'text-black bg-white border-gray-400': !props.dark,
+                        'text-black bg-slate-200 border-gray-400': !props.dark,
                    }"
                    :value="props.endDate"
                    @input="updateEndDate($event.target.value)">

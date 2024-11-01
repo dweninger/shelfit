@@ -7,7 +7,7 @@
                 <draggable v-model="books" item-key="id" class="drag-item">
                     <template #item="{element: book, index}">
                     <li>
-                        <div class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-stone-300">
+                        <div class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-slate-300">
                             <!-- Book Image -->
                             <img class="w-24 h-auto rounded-l-lg object-cover"
                                  :src="book.cover_image" :alt="book.title + ' cover'">
