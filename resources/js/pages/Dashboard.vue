@@ -28,7 +28,7 @@
 
                                 <!-- Star Rating -->
                                 <div class="flex justify-center mb-1">
-                                    <star-rating :modelValue="book.pivot.rating" />
+                                    <star-rating :modelValue="book.pivot.rating" @update:modelValue="updateBookField(book, 'rating', $event)" />
                                 </div>
 
                                 <!-- Status -->
@@ -39,8 +39,8 @@
                                     label=""
                                     :startDate="book.pivot.started_reading_at"
                                     :endDate="book.pivot.finished_reading_at"
-                                    @update:startDate="(value) => updateBookDate(book, 'started_reading_at', value)"
-                                    @update:endDate="(value) => updateBookDate(book, 'finished_reading_at', value)"
+                                    @update:startDate="(value) => updateBookField(book, 'started_reading_at', value)"
+                                    @update:endDate="(value) => updateBookField(book, 'finished_reading_at', value)"
                                     :dark="false"
                                 />
                             </div>
@@ -104,6 +104,17 @@ const getBooks = async () => {
     } catch (error) {
         console.error("Error fetching books:", error);
         books.value = null;
+    }
+};
+
+const updateBookField = async (book, field, newValue) => {
+    try {
+        await axios.put(`/book-user/${book.id}`, {
+            [field]: newValue
+        });
+        book.pivot[field] = newValue;
+    } catch (error) {
+        console.error("Failed to update book date:", error);
     }
 };
 

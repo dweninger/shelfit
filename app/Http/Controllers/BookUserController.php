@@ -82,8 +82,8 @@ class BookUserController extends Controller
 
     public function updateSortOrder(Request $request): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::user();
-
         foreach ($request->books as $bookData) {
             $user->books()->updateExistingPivot($bookData['id'], [
                 'sort_order' => $bookData['sort_order']
