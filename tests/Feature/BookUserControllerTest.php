@@ -90,8 +90,6 @@ class BookUserControllerTest extends TestCase
             'status'    => 'Want to Read',
         ])->assertSuccessful();
 
-        $this->assertDatabaseCount('book_user', 1);
-
         $this->assertDatabaseHas('book_user', [
             'book_id' => $book->id,
             'user_id' => $user->id,

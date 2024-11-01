@@ -64,13 +64,9 @@ class BookUserController extends Controller
             'status' => ['nullable', 'string', Rule::in(BookUserStatus::getStatuses())],
         ]);
 
-        $user->books()->updateExistingPivot($book->id, [
-            'comment' => $validated['comment'] ?? null,
-            'rating' => $validated['rating'] ?? null,
-            'started_reading_at' => $validated['started_reading_at'] ?? null,
-            'finished_reading_at' => $validated['finished_reading_at'] ?? null,
-            'status' => $validated['status'] ?? null,
-        ]);
+        $updateData = array_filter($validated);
+
+        $user->books()->updateExistingPivot($book->id, $updateData);
 
         return response()->json(['message' => 'Book updated successfully'], 200);
     }
@@ -82,5 +78,18 @@ class BookUserController extends Controller
         $user->books()->detach($book);
 
         return response()->json(['message' => 'Book removed successfully'], 200);
+    }
+
+    public function updateSortOrder(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+
+        foreach ($request->books as $bookData) {
+            $user->books()->updateExistingPivot($bookData['id'], [
+                'sort_order' => $bookData['sort_order']
+            ]);
+        }
+
+        return response()->json(['message' => 'Order updated successfully'], 200);
     }
 }

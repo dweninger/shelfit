@@ -4,7 +4,7 @@
         <div class="w-fit mx-auto">
             <bookshelf-top-bar :books="books" />
             <ul class="scrollable-ul overflow-y-auto max-h-[60vh] min-h-50 p-4" v-if="books && books.length">
-                <draggable v-model="books" item-key="id" class="drag-item">
+                <draggable v-model="books" item-key="id" class="drag-item" @end="updateSortOrder">
                     <template #item="{element: book, index}">
                     <li>
                         <div class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-slate-300">
@@ -105,6 +105,11 @@ const getBooks = async () => {
         console.error("Error fetching books:", error);
         books.value = null;
     }
+};
+
+const updateSortOrder = async () => {
+    const sortedBooks = books.value.map((book, index) => ({ id: book.id, sort_order: index + 1 }));
+    await axios.post("/book-user/update-order", { books: sortedBooks });
 };
 
 const handleBookAdded = () => {

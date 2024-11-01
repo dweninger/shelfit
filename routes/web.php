@@ -34,3 +34,6 @@ Route::put('/book-user/{book}', [BookUserController::class, 'update'])
 Route::delete('/book-user/{book}', [BookUserController::class, 'destroy'])
     ->middleware('auth')
     ->name('book-user.destroy');
+Route::post('/book-user/update-order', [BookUserController::class, 'updateSortOrder'])
+    ->middleware('auth')
+    ->name('book-user.updateSortOrder');

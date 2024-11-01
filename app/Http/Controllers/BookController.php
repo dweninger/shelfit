@@ -11,7 +11,7 @@ class BookController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $books = $user->books;
+        $books = $user->books()->orderBy('sort_order')->get();
 
         return response()->json($books);
     }
