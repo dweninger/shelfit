@@ -25,6 +25,13 @@
             </li>
         </ul>
     </div>
+    <div v-else-if="!searchResults.length && bookTitle.length >= 2">
+        <ul class="border border-gray-300 rounded-lg max-h-40 overflow-y-auto">
+            <li class="p-2 text-white">
+                No results
+            </li>
+        </ul>
+    </div>
 
 </template>
 
