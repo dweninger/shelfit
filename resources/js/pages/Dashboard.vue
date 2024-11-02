@@ -6,101 +6,11 @@
             <div class="scrollable-ul overflow-y-auto max-h-[60vh] min-h-50 p-4"
                 v-if="filteredBooks && filteredBooks.length">
                 <div v-if="searchQuery" v-for="book in filteredBooks">
-                    <div
-                        class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-slate-300">
-                        <!-- Book Image -->
-                        <img class="w-24 h-auto rounded-l-lg object-cover"
-                             :src="book.cover_image" :alt="book.title + ' cover'">
-
-                        <!-- Book Info Section -->
-                        <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
-                            <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">
-                                {{ book.title }}
-                            </h5>
-                            <p class="mb-2">{{ book.author }} | {{ book.published_at.split('-')[0] }}</p>
-                            <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">
-                                {{ book.pivot.comment }}
-                            </p>
-                        </div>
-
-                        <!-- Rating, Edit Button, and Date Section -->
-                        <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
-                            <!-- Edit Button -->
-                            <button class="absolute top-1 right-2" @click="onEditBookButtonPressed(book)">
-                                <edit-icon/>
-                            </button>
-
-                            <!-- Star Rating -->
-                            <div class="flex justify-center mb-1">
-                                <star-rating :modelValue="book.pivot.rating"
-                                             @update:modelValue="updateBookField(book, 'rating', $event)"/>
-                            </div>
-
-                            <!-- Status -->
-                            <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">
-                                {{ book.pivot.status ?? "Want to Read" }}
-                            </p>
-
-                            <!-- Date Pickers -->
-                            <date-range-picker
-                                label=""
-                                :startDate="book.pivot.started_reading_at"
-                                :endDate="book.pivot.finished_reading_at"
-                                @update:startDate="(value) => updateBookField(book, 'started_reading_at', value)"
-                                @update:endDate="(value) => updateBookField(book, 'finished_reading_at', value)"
-                                :dark="false"
-                            />
-                        </div>
-                    </div>
+                    <media-card :book="book" @edit="onEditBookButtonPressed" @update="updateBookField"/>
                 </div>
                 <draggable v-else v-model="books" item-key="id" class="drag-item" @end="updateSortOrder">
                     <template #item="{element: book, index}">
-                        <div
-                            class="flex flex-col md:flex-row items-stretch border border-gray-400 my-3 mx-auto rounded-lg shadow max-w-screen-xl bg-slate-300">
-                            <!-- Book Image -->
-                            <img class="w-24 h-auto rounded-l-lg object-cover"
-                                 :src="book.cover_image" :alt="book.title + ' cover'">
-
-                            <!-- Book Info Section -->
-                            <div class="flex flex-col justify-between p-4 leading-normal w-full min-w-[32rem]">
-                                <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">
-                                    {{ book.title }}
-                                </h5>
-                                <p class="mb-2">{{ book.author }} | {{ book.published_at.split('-')[0] }}</p>
-                                <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">
-                                    {{ book.pivot.comment }}
-                                </p>
-                            </div>
-
-                            <!-- Rating, Edit Button, and Date Section -->
-                            <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
-                                <!-- Edit Button -->
-                                <button class="absolute top-1 right-2" @click="onEditBookButtonPressed(book)">
-                                    <edit-icon/>
-                                </button>
-
-                                <!-- Star Rating -->
-                                <div class="flex justify-center mb-1">
-                                    <star-rating :modelValue="book.pivot.rating"
-                                                 @update:modelValue="updateBookField(book, 'rating', $event)"/>
-                                </div>
-
-                                <!-- Status -->
-                                <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">
-                                    {{ book.pivot.status ?? "Want to Read" }}
-                                </p>
-
-                                <!-- Date Pickers -->
-                                <date-range-picker
-                                    label=""
-                                    :startDate="book.pivot.started_reading_at"
-                                    :endDate="book.pivot.finished_reading_at"
-                                    @update:startDate="(value) => updateBookField(book, 'started_reading_at', value)"
-                                    @update:endDate="(value) => updateBookField(book, 'finished_reading_at', value)"
-                                    :dark="false"
-                                />
-                            </div>
-                        </div>
+                        <media-card :book="book" @edit="onEditBookButtonPressed" @update="updateBookField"/>
                     </template>
                 </draggable>
             </div>
@@ -121,19 +31,17 @@
 </template>
 
 <script setup>
-import {ref, onBeforeMount, computed} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
 import axios from "axios";
 import Layout from "../components/Layout.vue";
 import AddBookToShelfModal from "../components/modals/AddBookToShelfModal.vue";
 import UpdateShelvedBookModal from "../components/modals/UpdateShelvedBookModal.vue";
-import StarRating from "../components/StarRating.vue";
-import DateRangePicker from "../components/DateRangePicker.vue";
-import EditIcon from "../components/icons/EditIcon.vue";
 import PlusIcon from "../components/icons/PlusIcon.vue";
 import modalVisibility from "../composables/modalVisibility";
 import draggable from "vuedraggable";
 import BookshelfTopBar from "../components/BookshelfTopBar.vue";
 import {debounce} from "lodash";
+import MediaCard from "../components/MediaCard.vue";
 
 const books = ref([]);
 const selectedBook = ref({});
