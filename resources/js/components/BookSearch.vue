@@ -1,6 +1,7 @@
 <template>
     <div>
-        <label for="book" class="block mb-2 text-sm font-medium text-white">Search for a Book <span class="text-red-600">*</span></label>
+        <label for="book" class="block mb-2 text-sm font-medium text-white">Search for a Book <span
+            class="text-red-600">*</span></label>
         <input
             v-model="bookTitle"
             @input="searchBooks"
@@ -33,8 +34,8 @@ import {debounce} from 'lodash';
 import axios from 'axios';
 import {ref} from "vue";
 
-const props = defineProps( {
-    selectedBook : {
+const props = defineProps({
+    selectedBook: {
         type: Object,
         default: null,
     }

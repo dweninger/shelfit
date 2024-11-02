@@ -3,20 +3,21 @@
         <div class="p-4 md:p-5">
             <form @submit.prevent="submitForm" class="space-y-4">
 
-                <book-search :selectedBook="form.selectedBook" @book-selected="onBookSelected" />
+                <book-search :selectedBook="form.selectedBook" @book-selected="onBookSelected"/>
 
                 <div v-if="form.selectedBook">
                     <p class="text-white"><strong>Selected Book:</strong> {{ form.selectedBook.title }}</p>
                 </div>
-                <form-text-area v-model="form.comment" field="comment" label="Comment" placeholder="I liked the book a lot. The twist was very good." />
+                <form-text-area v-model="form.comment" field="comment" label="Comment"
+                                placeholder="I liked the book a lot. The twist was very good."/>
 
                 <div class="flex w-full justify-between items-center">
 
-                    <form-select v-model="form.selectedStatus" :options="statuses" label="Status" field="status" />
+                    <form-select v-model="form.selectedStatus" :options="statuses" label="Status" field="status"/>
 
                     <div class="w-fit px-4">
                         <label class="block mb-2 text-sm font-medium text-white">Rating</label>
-                        <star-rating v-model="form.rating" />
+                        <star-rating v-model="form.rating"/>
                     </div>
                 </div>
 
@@ -29,7 +30,7 @@
                     :dark="true"
                 />
 
-                <hr />
+                <hr/>
 
                 <button
                     type="submit"
@@ -54,10 +55,10 @@ import FormTextArea from "../form/FormTextArea.vue";
 import FormSelect from "../form/FormSelect.vue";
 
 const props = defineProps({
-        isVisible: {
-            type: Boolean,
-            default: false,
-        },
+    isVisible: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits(['book-added', 'close']);
@@ -89,7 +90,7 @@ const getStatuses = async () => {
 };
 
 const onBookSelected = (book) => {
-  form.value.selectedBook = book;
+    form.value.selectedBook = book;
 };
 
 const submitForm = async () => {

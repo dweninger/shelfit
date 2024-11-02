@@ -1,7 +1,7 @@
 <template>
     <div>
         <label :for="field" class="block mb-2 text-sm font-medium text-white">
-            {{label}}
+            {{ label }}
             <span v-if="$attrs['required'] !== undefined" class="required-asterisk">*</span>
         </label>
         <input
@@ -26,7 +26,7 @@ const props = defineProps<Props>();
 </script>
 
 <style scoped>
-.required-asterisk{
+.required-asterisk {
     color: firebrick;
 }
 </style>

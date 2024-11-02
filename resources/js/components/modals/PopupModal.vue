@@ -4,13 +4,13 @@
             <div class="relative rounded-lg shadow bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
                     <h3 class="text-xl font-semibold text-white">
-                        {{title}}
+                        {{ title }}
                     </h3>
                     <button
                         @click="hideModal"
                         class="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
                     >
-                        <x-icon />
+                        <x-icon/>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>

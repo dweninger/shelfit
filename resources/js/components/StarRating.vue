@@ -23,10 +23,10 @@ import {ref, watch} from "vue";
 import StarIcon from "./icons/StarIcon.vue";
 
 const props = defineProps({
-      modelValue: {
-          type: Number,
-          default: 0,
-      }
+    modelValue: {
+        type: Number,
+        default: 0,
+    }
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -47,8 +47,8 @@ const resetHover = () => {
     hoveredRating.value = null;
 };
 
-watch( () => props.modelValue, (newRating) => {
-        currentRating.value = newRating;
+watch(() => props.modelValue, (newRating) => {
+    currentRating.value = newRating;
 });
 
 </script>

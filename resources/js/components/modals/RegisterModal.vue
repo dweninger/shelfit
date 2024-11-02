@@ -3,10 +3,16 @@
         <div class="p-4 md:p-5">
             <form @submit.prevent="submitForm" class="space-y-4">
                 <form-input v-model="name" field="name" label="Your name" placeholder="John Doe" required/>
-                <form-input v-model="email" field="email" label="Your email" type="email" placeholder="jdoe@example.com" required/>
-                <form-input v-model="password" field="password" label="Your password" type="password" placeholder="••••••••" required/>
-                <form-input v-model="password_confirmation" field="password_confirmation" label="Confirm password" type="password" placeholder="••••••••" required/>
-                <button type="submit" class="w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Register</button>
+                <form-input v-model="email" field="email" label="Your email" type="email" placeholder="jdoe@example.com"
+                            required/>
+                <form-input v-model="password" field="password" label="Your password" type="password"
+                            placeholder="••••••••" required/>
+                <form-input v-model="password_confirmation" field="password_confirmation" label="Confirm password"
+                            type="password" placeholder="••••••••" required/>
+                <button type="submit"
+                        class="w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">
+                    Register
+                </button>
             </form>
         </div>
     </popup-modal>
