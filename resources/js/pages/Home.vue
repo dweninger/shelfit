@@ -1,5 +1,5 @@
 <template>
-    <Layout />
+    <Layout/>
     <div class="min-h-screen bg-gray-700">
         <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 text-white py-10">
             <div class="container mx-auto text-center">

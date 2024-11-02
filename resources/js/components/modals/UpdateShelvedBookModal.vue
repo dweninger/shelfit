@@ -2,7 +2,8 @@
     <popup-modal :title="form.selectedBook.title" :isVisible="isVisible" @close="hideUpdateModal">
         <div class="p-4 md:p-5">
             <form @submit.prevent="updateShelvedBook" class="space-y-4">
-                <form-text-area v-model="form.comment" field="comment" label="Comment" placeholder="I liked the book a lot. The twist was very good." />
+                <form-text-area v-model="form.comment" field="comment" label="Comment"
+                                placeholder="I liked the book a lot. The twist was very good."/>
 
                 <div class="flex w-full justify-between items-center">
 
@@ -10,7 +11,7 @@
 
                     <div class="w-fit px-4">
                         <label class="block mb-2 text-sm font-medium text-white">Rating</label>
-                        <star-rating v-model="form.rating" />
+                        <star-rating v-model="form.rating"/>
                     </div>
                 </div>
 
@@ -23,7 +24,7 @@
                     :dark="true"
                 />
 
-                <hr />
+                <hr/>
                 <div class="w-full flex justify-between">
                     <button
                         type="submit"
@@ -45,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import {ref, watch, onMounted} from 'vue';
 import axios from 'axios';
 import StarRating from '../StarRating.vue';
 import DateRangePicker from "../DateRangePicker.vue";
@@ -136,8 +137,7 @@ const hideUpdateModal = () => {
 
 const removeBookFromShelf = async () => {
     try {
-        await axios.delete(`/book-user/${form.value.selectedBook.id}`, {
-        }, {
+        await axios.delete(`/book-user/${form.value.selectedBook.id}`, {}, {
             headers: {
                 'X-CSRF-TOKEN': csrfToken.value
             }

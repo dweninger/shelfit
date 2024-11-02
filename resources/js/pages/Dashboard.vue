@@ -2,9 +2,9 @@
     <div class="dashboard min-h-screen bg-gray-700">
         <layout></layout>
         <div class="w-fit mx-auto">
-            <bookshelf-top-bar :books="filteredBooks" @search="handleSearch" @sort="handleSort" />
+            <bookshelf-top-bar :books="filteredBooks" @search="handleSearch" @sort="handleSort"/>
             <div class="scrollable-ul overflow-y-auto max-h-[60vh] min-h-50 p-4"
-                v-if="filteredBooks && filteredBooks.length">
+                 v-if="filteredBooks && filteredBooks.length">
                 <div v-if="searchQuery || sortOrder !== 'your-order'" v-for="book in filteredBooks">
                     <media-card :book="book" @edit="onEditBookButtonPressed" @update="updateBookField"/>
                 </div>
