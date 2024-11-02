@@ -5,7 +5,8 @@
                 <h1 class="text-5xl">Books</h1>
                 <p class="ml-4 text-gray-200">{{books.length}} Items</p>
             </div>
-
+            <div></div>
+            <div></div>
             <div class="flex items-end">
                 <form @submit.prevent="sendSearchQuery" class="max-w-lg mx-12">
                     <div class="flex">
@@ -21,6 +22,28 @@
                     </div>
                 </form>
             </div>
+            <div class="items-end">
+                <label for="sort" class="block mb-2 text-sm font-medium text-white">Sort by</label>
+                <select
+                    id="sort"
+                    v-model="sortOption"
+                    @change="sendSortOrder"
+                    class="block p-2.5 w-full z-20 text-sm text-wite rounded rounded-e-lg border focus:ring-blue-500 focus:border-blue-500 bg-gray-700 border-slate-200 placeholder-gray-300">
+                    <option selected value="your-order">Your Order</option>
+                    <option value="title-a">Title A-Z</option>
+                    <option value="title-z">Title Z-A</option>
+                    <option value="author-a">Author A-Z</option>
+                    <option value="author-z">Author Z-A</option>
+                    <option value="rating-high">Rating High-Low</option>
+                    <option value="rating-low">Rating Low-High</option>
+                    <option value="started-recent">Started Recent</option>
+                    <option value="started-oldest">Started Oldest</option>
+                    <option value="finished-recent">Finished Recent</option>
+                    <option value="finished-oldest">Finished Oldest</option>
+                    <option value="status-a">Status A-Z</option>
+                    <option value="status-z">Status Z-A</option>
+                </select>
+            </div>
         </div>
         <hr class="mt-2" />
     </div>
@@ -29,8 +52,9 @@
 <script setup>
 import {ref} from "vue";
 
-const emit = defineEmits(['search']);
+const emit = defineEmits(['search', 'sort']);
 const searchText = ref('');
+const sortOption = ref('your-order');
 
 const props = defineProps({
    books: {
@@ -41,6 +65,10 @@ const props = defineProps({
 const sendSearchQuery = () => {
     emit('search', searchText.value);
 };
+
+const sendSortOrder = () => {
+    emit('sort', sortOption.value)
+}
 </script>
 
 <style scoped>

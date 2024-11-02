@@ -2,10 +2,10 @@
     <div class="dashboard min-h-screen bg-gray-700">
         <layout></layout>
         <div class="w-fit mx-auto">
-            <bookshelf-top-bar :books="filteredBooks" @search="handleSearch"/>
+            <bookshelf-top-bar :books="filteredBooks" @search="handleSearch" @sort="handleSort" />
             <div class="scrollable-ul overflow-y-auto max-h-[60vh] min-h-50 p-4"
                 v-if="filteredBooks && filteredBooks.length">
-                <div v-if="searchQuery" v-for="book in filteredBooks">
+                <div v-if="searchQuery || sortOrder !== 'your-order'" v-for="book in filteredBooks">
                     <media-card :book="book" @edit="onEditBookButtonPressed" @update="updateBookField"/>
                 </div>
                 <draggable v-else v-model="books" item-key="id" class="drag-item" @end="updateSortOrder">
@@ -46,6 +46,7 @@ import MediaCard from "../components/MediaCard.vue";
 const books = ref([]);
 const selectedBook = ref({});
 const searchQuery = ref('');
+const sortOrder = ref('your-order');
 
 const {
     isModalVisible: isAddBookModalVisible,
@@ -61,17 +62,6 @@ const {
 onBeforeMount(() => {
     getBooks();
 })
-
-const statusColor = (status) => {
-    switch (status) {
-        case 'Completed':
-            return 'text-green-800';
-        case 'Did Not Finish':
-            return 'text-red-800';
-        default:
-            return 'text-yellow-800';
-    }
-};
 
 const getBooks = async () => {
     try {
@@ -129,6 +119,57 @@ const filteredBooks = computed(() => {
 
 const handleSearch = (query) => {
     searchQuery.value = query;
+};
+
+const handleSort = (option) => {
+    sortOrder.value = option;
+
+    let sortedBooks = [...books.value];
+
+    switch (option) {
+        case 'title-a':
+            sortedBooks.sort((a, b) => a.title.localeCompare(b.title));
+            break;
+        case 'title-z':
+            sortedBooks.sort((a, b) => b.title.localeCompare(a.title));
+            break;
+        case 'author-a':
+            sortedBooks.sort((a, b) => a.author.localeCompare(b.author));
+            break;
+        case 'author-z':
+            sortedBooks.sort((a, b) => b.author.localeCompare(a.author));
+            break;
+        case 'rating-high':
+            sortedBooks.sort((a, b) => b.rating - a.rating);
+            break;
+        case 'rating-low':
+            sortedBooks.sort((a, b) => a.rating - b.rating);
+            break;
+        case 'started-recent':
+            sortedBooks.sort((a, b) => new Date(b.pivot.started_reading_at) - new Date(a.pivot.started_reading_at));
+            break;
+        case 'started-oldest':
+            sortedBooks.sort((a, b) => new Date(a.pivot.started_reading_at) - new Date(b.pivot.started_reading_at));
+            break;
+        case 'finished-recent':
+            sortedBooks.sort((a, b) => new Date(b.pivot.finished_reading_at) - new Date(a.pivot.finished_reading_at));
+            break;
+        case 'finished-oldest':
+            sortedBooks.sort((a, b) => new Date(a.pivot.finished_reading_at) - new Date(b.pivot.finished_reading_at));
+            break;
+        case 'status-a':
+            sortedBooks.sort((a, b) => a.pivot.status.localeCompare(b.pivot.status));
+            break;
+        case 'status-z':
+            sortedBooks.sort((a, b) => b.pivot.status.localeCompare(a.pivot.status));
+            break;
+        default:
+            getBooks();
+            sortedBooks = books.value;
+            break;
+    }
+
+    books.value = sortedBooks;
 };
 </script>
 
