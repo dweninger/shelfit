@@ -23,6 +23,8 @@ class AuthController extends Controller
            'password' => Hash::make($validated['password']),
         ]);
 
+        Auth::login($user);
+
         return response()->json(['message' => 'User registered successfully!'], 201);
     }
 

@@ -91,13 +91,13 @@ const logout = async () => {
     }
 };
 
-const handleLogin = (user) => {
-    user.value = user;
+const handleLogin = () => {
+    getUser();
     window.location.href = '/dashboard';
 };
 
-const handleRegister = (data) => {
-    user.value = data.user;
+const handleRegister = () => {
+    getUser();
     window.location.href = '/dashboard';
 };
 
