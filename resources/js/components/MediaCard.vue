@@ -10,31 +10,26 @@
             <h5 class="text-2xl font-bold tracking-tight text-gray-900 w-full overflow-hidden whitespace-nowrap text-ellipsis">
                 {{ book.title }}
             </h5>
-            <p class="mb-2">{{ book.author }} | {{ book.published_at.split('-')[0] }}</p>
-            <p class="mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">
+            <p class="mb-2">{{ book.author }}</p>
+            <p class="ml-10 mb-0 font-normal text-gray-700 h-12 overflow-y-auto line-clamp-2">
                 {{ book.pivot.comment }}
             </p>
         </div>
 
-        <!-- Rating, Edit Button, and Date Section -->
         <div class="flex flex-col justify-between p-4 leading-normal w-full md:w-1/3 relative">
-            <!-- Edit Button -->
             <button class="absolute top-1 right-2" @click="emitEditEvent(book)">
                 <edit-icon/>
             </button>
 
-            <!-- Star Rating -->
             <div class="flex justify-center mb-1">
                 <star-rating :modelValue="book.pivot.rating"
                              @update:modelValue="emitUpdateEvent(book, 'rating', $event)"/>
             </div>
 
-            <!-- Status -->
             <p :class="[statusColor(book.pivot.status), 'font-bold', 'text-center', 'mb-2']">
                 {{ book.pivot.status ?? "Want to Read" }}
             </p>
 
-            <!-- Date Pickers -->
             <date-range-picker
                 label=""
                 :startDate="book.pivot.started_reading_at"
