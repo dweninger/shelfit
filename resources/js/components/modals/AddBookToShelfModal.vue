@@ -94,15 +94,15 @@ const onBookSelected = async (book) => {
 
     try {
         const response = await axios.get(`/books/check?title=${book.title}`);
-        console.log(response);
         if (!response.data.exists) {
-            await axios.post('/books', {
+            const postResponse = await axios.post('/books', {
                 title: book.title,
                 author: book.author,
                 cover_image: book.cover_image,
                 genre: book.genre,
                 published_at: book.published_at,
             });
+            form.value.selectedBook = postResponse.data;
         }
     } catch (error){
         console.error('Error checking or adding book to the database:', error);
