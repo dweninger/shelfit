@@ -140,10 +140,10 @@ const handleSort = (option) => {
             sortedBooks.sort((a, b) => b.author.localeCompare(a.author));
             break;
         case 'rating-high':
-            sortedBooks.sort((a, b) => b.rating - a.rating);
+            sortedBooks.sort((a, b) => b.pivot.rating - a.pivot.rating);
             break;
         case 'rating-low':
-            sortedBooks.sort((a, b) => a.rating - b.rating);
+            sortedBooks.sort((a, b) => a.pivot.rating - b.pivot.rating);
             break;
         case 'started-recent':
             sortedBooks.sort((a, b) => new Date(b.pivot.started_reading_at) - new Date(a.pivot.started_reading_at));
