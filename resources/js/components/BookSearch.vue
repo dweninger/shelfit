@@ -57,62 +57,13 @@ const searchBooks = debounce(async () => {
         try {
             const response = await axios.get(`/books/search?title=${bookTitle.value}`);
             searchResults.value = response.data;
-            if (searchResults.value.length === 0) {
-                const googleResponse = await axios.get(`/search-books?title=${bookTitle.value}`);
-                const googleBooks = googleResponse.data.items || [];
-
-                const formattedBooks = googleBooks.map(book => {
-                    const publishedDateStr = book.volumeInfo.publishedDate || null;
-                    let publishedAt = null;
-
-                    if (publishedDateStr) {
-                        if (/^\d{4}$/.test(publishedDateStr)) {
-                            publishedAt = new Date(`${publishedDateStr}-01-01`);
-                        } else if (/^\d{4}-\d{2}$/.test(publishedDateStr)) {
-                            publishedAt = new Date(`${publishedDateStr}-01`);
-                        } else {
-                            publishedAt = publishedDateStr;
-                        }
-                        publishedAt = new Date(publishedDateStr).toISOString().slice(0, 10);
-                    }
-
-                    return {
-                        title: book.volumeInfo.title || 'Unknown Title',
-                        author: (book.volumeInfo.authors && book.volumeInfo.authors[0]) || 'Unknown Author',
-                        cover_image: (book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail) || null,
-                        genre: (book.volumeInfo.categories && book.volumeInfo.categories[0]) || 'Unknown Genre',
-                        published_at: publishedAt,
-                    };
-                });
-
-                const uniqueBooks = [];
-                const seenTitles = new Set();
-
-                for (const book of formattedBooks) {
-                    if (!seenTitles.has(book.title)) {
-                        uniqueBooks.push(book);
-                        seenTitles.add(book.title);
-                    } else {
-                        const existingBook = uniqueBooks.find(b => b.title === book.title);
-                        const existingDate = new Date(existingBook.published_at);
-                        const newDate = new Date(book.published_at);
-
-                        if (newDate < existingDate) {
-                            const index = uniqueBooks.indexOf(existingBook);
-                            uniqueBooks[index] = book;
-                        }
-                    }
-                }
-
-                searchResults.value = uniqueBooks;
-            }
         } catch (e) {
             console.error('Error searching for books: ', e);
         }
     } else {
         searchResults.value = [];
     }
-}, 1000);
+}, 400);
 
 const selectBook = (book) => {
     emit('book-selected', book);
